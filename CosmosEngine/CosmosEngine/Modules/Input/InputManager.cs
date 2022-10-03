@@ -12,9 +12,25 @@ namespace CosmosEngine
 	{
 		private static readonly Dictionary<string, InputButton> inputButtons = new Dictionary<string, InputButton>();
 
+		/// <summary>
+		/// Returns true if any key or mouse is currently held.
+		/// </summary>
+		public static bool AnyKey => InputState.AnyKey;
+		/// <summary>
+		/// The current mouse position in pixel coordinates.
+		/// </summary>
 		public static Vector2 MousePosition => InputState.MousePosition;
+		/// <summary>
+		/// The current mouse delta.
+		/// </summary>
 		public static Vector2 MouseDelta => InputState.MouseDelta;
+		/// <summary>
+		/// The current mouse scroll position.
+		/// </summary>
 		public static float MouseScrollPosition => InputState.MouseScrollWheel.Y;
+		/// <summary>
+		/// The current mouse scroll delta.
+		/// </summary>
 		public static float MouseScrollDelta => InputState.MouseScrollWheelDelta.Y;
 		public static bool ActiveAndReady => (CoreModule.Core.WindowInFocus && Exist);
 
@@ -299,6 +315,42 @@ namespace CosmosEngine
 				4 => InputState.Released(MouseButton.ThumbButton2),
 				_ => false,
 			};
+		}
+
+		/// <summary>
+		/// Returns true while the user holds down the <paramref name="key"/> identified by the <see cref="CosmosEngine.InputModule.Keys"/>.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		public static bool GetKey(Keys key)
+		{
+			if (!ActiveAndReady)
+				return false;
+			return InputState.Held(key);
+		}
+
+		/// <summary>
+		/// Returns true during the frame the user starts pressing down the <paramref name="key"/> identified by the <see cref="CosmosEngine.InputModule.Keys"/>.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		public static bool GetKeyDown(Keys key)
+		{
+			if (!ActiveAndReady)
+				return false;
+			return InputState.Pressed(key);
+		}
+
+		/// <summary>
+		/// eturns true during the frame the user releases the <paramref name="key"/> identified by the <see cref="CosmosEngine.InputModule.Keys"/>.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		public static bool GetKeyUp(Keys key)
+		{
+			if (!ActiveAndReady)
+				return false;
+			return InputState.Released(key);
 		}
 	}
 }

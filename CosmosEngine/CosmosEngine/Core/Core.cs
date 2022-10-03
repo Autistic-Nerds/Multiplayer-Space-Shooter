@@ -202,7 +202,6 @@ namespace CosmosEngine.CoreModule
 
 			Rendering.Draw.Colour = Colour.White;
 			InputState.Update();
-			Input.Update(); //<--- Should be made into a Game System.
 			foreach (IModule system in gameModules)
 			{
 				if (system is IUpdateModule update)

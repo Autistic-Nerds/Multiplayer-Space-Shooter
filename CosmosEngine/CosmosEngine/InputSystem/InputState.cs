@@ -18,6 +18,7 @@ namespace CosmosEngine
 	/// </summary>
 	public static class InputState
 	{
+		private static bool anyKeyPressed;
 		private static Vector2 mouseScrollWheelDelta;
 		private static Vector2 mouseScrollWheel;
 		private static Vector2 mousePosition;
@@ -27,6 +28,7 @@ namespace CosmosEngine
 		private static MouseState mouseState, previousMouseState;
 		private static GamePadState gamepadState, previousGamepadState;
 
+		public static bool AnyKey => anyKeyPressed;
 		public static Vector2 MousePosition => mousePosition;
 		public static Vector2 MouseDelta => mouseDelta;
 		public static Vector2 MouseScrollWheel => mouseScrollWheel;
@@ -42,6 +44,7 @@ namespace CosmosEngine
 			mouseState = Mouse.GetState();
 			gamepadState = GamePad.GetState(0);
 
+			AnyKeyPressed();
 			CompareMouseState();
 		}
 
@@ -64,6 +67,31 @@ namespace CosmosEngine
 			{
 				mouseDelta = (Vector2)(mouseState.Position - previousMouseState.Position).ToVector2();
 				mousePosition = (Vector2)mouseState.Position.ToVector2();
+			}
+		}
+
+		private static void AnyKeyPressed()
+		{
+			//Are any keyboard keys pressed?
+			int keysPressed = keyboardState.GetPressedKeyCount();
+			if (keysPressed > 0)
+			{
+				anyKeyPressed = true;
+			}
+			else
+			{
+				//Are any mouse button pressed?
+				if (Held(MouseButton.Left) ||
+					Held(MouseButton.Right) ||
+					Held(MouseButton.Middle) ||
+					Held(MouseButton.ThumbButton1) ||
+					Held(MouseButton.ThumbButton2))
+				{
+					anyKeyPressed = true;
+				}
+				else
+					anyKeyPressed = false;
+				//If not sey anyKey to false.
 			}
 		}
 
