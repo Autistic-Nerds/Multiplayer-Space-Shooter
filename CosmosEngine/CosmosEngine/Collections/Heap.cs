@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 using System.Collections;
 using System.Collections.Generic;
 

@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 using System;
 
 namespace CosmosEngine.Modules

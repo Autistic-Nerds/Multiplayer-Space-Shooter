@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 using Vector2Xna = Microsoft.Xna.Framework.Vector2;
 using Matrix = Microsoft.Xna.Framework.Matrix;
 using System;
@@ -124,6 +124,8 @@ namespace CosmosEngine
 				lastOrthographicSize = orthographicSize;
 				UpdateCamera();
 			}
+
+			Debug.QuickLog(boundingBox);
 		}
 
 		public void UpdateCamera()

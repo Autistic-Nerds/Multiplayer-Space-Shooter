@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 using System;
 using Matrix = Microsoft.Xna.Framework.Matrix;
 
@@ -242,7 +242,7 @@ namespace CosmosEngine
 			}
 			else if(relativeTo == Space.Self)
 			{
-				Position += translation.Transform(Rotation);
+				Position += translation.Transform(Rotation) * 100f;
 			}
 		}
 		/// <summary>

@@ -1,4 +1,5 @@
-﻿//Written by Philip Wittusen
+﻿using Microsoft.Xna.Framework;
+
 namespace CosmosEngine.PhysicsModule
 {
 	public static partial class PhysicsIntersection
@@ -8,12 +9,19 @@ namespace CosmosEngine.PhysicsModule
 		/// <summary>
 		/// Calculate collision between two rectangles.
 		/// </summary>
+		/// <param name="a">First BoxCollider.</param>
+		/// <param name="b">Second BoxCollider.</param>
+		/// <returns></returns>
+		public static bool BoxBox(BoxCollider a, BoxCollider b) => BoxBox(a.Position, a.ScaledSize, b.Position, b.ScaledSize);
+		/// <summary>
+		/// <inheritdoc cref="BoxBox(BoxCollider, BoxCollider)"/>
+		/// </summary>
 		/// <param name="a">The first rectangle.</param>
 		/// <param name="b">The second rectangle</param>
 		/// <returns></returns>
-		public static bool BoxBox(Rect a, Rect b) => a.Intersects(b);
+		public static bool BoxBox(Rectangle a, Rectangle b) => a.Intersects(b);
 		/// <summary>
-		/// <inheritdoc cref="BoxBox(Rect, Rect)"/>
+		/// <inheritdoc cref="BoxBox(BoxCollider, BoxCollider)"/>
 		/// </summary>
 		/// <param name="posA">First box center position as a <see cref="CosmosEngine.Vector2"/></param>
 		/// <param name="sizeA">First box size as a <see cref="CosmosEngine.Vector2"/></param>
@@ -23,7 +31,7 @@ namespace CosmosEngine.PhysicsModule
 		public static bool BoxBox(Vector2 posA, Vector2 sizeA, Vector2 posB, Vector2 sizeB) => BoxBox(posA.X - sizeA.X / 2, posA.Y - sizeA.Y / 2, sizeA.X, sizeA.Y, posB.X - sizeB.X / 2, posB.Y - sizeB.Y / 2, sizeB.X, sizeB.Y);
 
 		/// <summary>
-		/// <inheritdoc cref="BoxBox(Rect, Rect)"/>
+		/// <inheritdoc cref="BoxBox(BoxCollider, BoxCollider)"/>
 		/// </summary>
 		/// <param name="rAx">First box top left corner X position.</param>
 		/// <param name="rAy">First box top left corner Y position.</param>

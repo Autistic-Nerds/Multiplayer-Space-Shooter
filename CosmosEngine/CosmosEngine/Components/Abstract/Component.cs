@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 using CosmosEngine.CoreModule;
 using System;
 using System.Collections.Generic;
@@ -28,7 +28,7 @@ namespace CosmosEngine
 			set => base.DestroyOnLoad = value;
 		}
 		public GameObject GameObject => gameObject;
-		public override Transform Transform => GameObject.Transform;
+		public override Transform Transform => GameObject != null ? GameObject.Transform : null;
 		#endregion
 
 		#region Public Methods

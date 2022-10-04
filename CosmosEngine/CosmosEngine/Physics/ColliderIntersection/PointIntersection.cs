@@ -1,5 +1,4 @@
-﻿//Written by Philip Wittusen
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
+﻿using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace CosmosEngine.PhysicsModule
 {

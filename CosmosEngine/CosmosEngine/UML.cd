@@ -1,0 +1,313 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CosmosEngine.CoreModule.Object" Collapsed="true">
+    <Position X="7.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEBAAARABEAAYCEAAWAIgQAggNEQRAJAAEAQAABCEA=</HashCode>
+      <FileName>Object\Object.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CosmosEngine.Factory.Factory&lt;T&gt;" Collapsed="true">
+    <Position X="4.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Factory\Factory.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CosmosEngine.CoreModule.Behaviour" Collapsed="true">
+    <Position X="6.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQEAAAAACAIAAAAAAAAJAQgAAAAAIAAYAAAAAAAAAA=</HashCode>
+      <FileName>Object\Behaviour.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CosmosEngine.ScriptableObject&lt;T&gt;" Collapsed="true">
+    <Position X="8.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Object\ScriptableObject.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.Pool.ObjectPool&lt;T&gt;" Collapsed="true">
+    <Position X="11" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAIAAAAAQAAAAAgEAgAAgAEAAAAAA=</HashCode>
+      <FileName>ObjectPool\ObjectPool.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CosmosEngine.Component" Collapsed="true">
+    <Position X="5.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAIAIAEAAAABAQgAAAAAAgAAgAAAAIAAAA=</HashCode>
+      <FileName>Components\Abstract\Component.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.GameObject" Collapsed="true">
+    <Position X="7.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABgAAAAAAIEQAgAACAFAUgAAAEAIAIYAAAAAAASEI=</HashCode>
+      <FileName>Object\GameObject.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.Async.CoroutineFactory" Collapsed="true">
+    <Position X="0.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Coroutine\CoroutineFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.Factory.PrefabFactory&lt;T&gt;" Collapsed="true">
+    <Position X="3.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAgAAAAIAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Factory\PrefabFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.GameBehaviour" Collapsed="true">
+    <Position X="8.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAACCAAAAAAAAAAAAAgBAAAE=</HashCode>
+      <FileName>Components\Abstract\GameBehaviour.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.Singleton&lt;T&gt;" Collapsed="true">
+    <Position X="10.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAABAAAAAQAAAAAAAAEA=</HashCode>
+      <FileName>Components\Abstract\Singleton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.CoreModule.UIComponent" Collapsed="true">
+    <Position X="13" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\Abstract\UIComponent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.Collider" Collapsed="true">
+    <Position X="15.25" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQQlACAAASBAEAAgACAECSBAIAgAAACAACAAAAIgCGA=</HashCode>
+      <FileName>Components\Physics\Colliders\Collider.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CosmosEngine.Rigidbody" Collapsed="true">
+    <Position X="17.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAACAAAAAgAAAAAAAAAAAAAAgQAgAAEAAAAAA=</HashCode>
+      <FileName>Components\Physics\Rigidbody.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CosmosEngine.Animator" Collapsed="true">
+    <Position X="19.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAIAABAAA=</HashCode>
+      <FileName>Components\Rendering\Animator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.Camera" Collapsed="true">
+    <Position X="22" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQhQAAAIAACAAwgAAAACgAAAAIAEAAoAAAEBAiACEA=</HashCode>
+      <FileName>Components\Rendering\Camera.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.CoreModule.Renderer" Collapsed="true">
+    <Position X="24.25" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAABAAABAAEAA=</HashCode>
+      <FileName>Components\Rendering\Renderer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CosmosEngine.Transform" Collapsed="true">
+    <Position X="26.5" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIDAAISAgAABIDkAAIAQBAAEgAQAAiACkCEAAAAAAI=</HashCode>
+      <FileName>Components\Transform.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.Pool.SingletonPool&lt;TItem, TPool&gt;" Collapsed="true">
+    <Position X="10.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAABAIAAAAAQAAAAAgEAgAAgAEBAAAAA=</HashCode>
+      <FileName>ObjectPool\SingletonPool.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CosmosEngine.Async.CoroutinePool" Collapsed="true">
+    <Position X="13" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Coroutine\CoroutinePool.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.BoxCollider" Collapsed="true">
+    <Position X="14.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAigACAABAAAgAAgBIAAAEQAAEAAAAgAAAAAAAII8AA=</HashCode>
+      <FileName>Components\Physics\Colliders\BoxCollider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.CircleCollider" Collapsed="true">
+    <Position X="16.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAC4ACAAGAAAAAAgAQAAAAAAAAAAAAgAAAAAAAAIgAA=</HashCode>
+      <FileName>Components\Physics\Colliders\CircleCollider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.CoreModule.UIRenderer" Collapsed="true">
+    <Position X="9.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAEAAAABAAAAAAAAAAAIAAAAAAAAAAAAAAAABAAEAA=</HashCode>
+      <FileName>Components\Abstract\UIRenderer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CosmosEngine.UI.Button" Collapsed="true">
+    <Position X="12" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAwAAAAAABAAAAAEAAAAACAAABABgJAgAgACAACAA=</HashCode>
+      <FileName>Components\UI\Button.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.UI.Image" Collapsed="true">
+    <Position X="8.25" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAACAgAAAAIAAIAAAABAAAAAYAQIACBEgGAA=</HashCode>
+      <FileName>Components\UI\Image.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.UI.TextField" Collapsed="true">
+    <Position X="10.5" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACIAAAAkAAAAAAACgAAAIgBAAAAAAAAIAAAACAACEAA=</HashCode>
+      <FileName>Components\UI\TextField.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.SpriteRenderer" Collapsed="true">
+    <Position X="24.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAABAAAAAQABAAAAAAAAA=</HashCode>
+      <FileName>Components\Rendering\SpriteRenderer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.UI.RectTransform" Collapsed="true">
+    <Position X="26.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAARABAAARABEAAAAAEAAAgAAADAIAAAgAAAACAA=</HashCode>
+      <FileName>Components\UI\RectTransform.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CosmosEngine.SpriteAnimator" Collapsed="true">
+    <Position X="19.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\Rendering\SpriteAnimator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.Modules.GameModule&lt;T&gt;" Collapsed="true">
+    <Position X="18.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAACAAAQAAAAAAABAAAABAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Modules\Essentials\GameModule.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CosmosEngine.CoreModule.Game" Collapsed="true">
+    <Position X="13" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>MIQACASAACAAAUAAAAIAAAAAAABAAEAIAAEAAAAAAAQ=</HashCode>
+      <FileName>Core\Game.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CosmosEngine.Modules.DebugModule" Collapsed="true">
+    <Position X="15.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Modules\Editor\DebugModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.Modules.ObserverManager&lt;TItem, TManager&gt;" Collapsed="true">
+    <Position X="17.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYgAAAAACAAABAAAAQABAQAAIICAgAAwAAAgAAAAAA=</HashCode>
+      <FileName>Modules\Essentials\ObserverManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CosmosEngine.InputSystem.Input" Collapsed="true">
+    <Position X="19.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Modules\Input\Input.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.InputManager" Collapsed="true">
+    <Position X="22" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAQBQAAQAAAEAAAAAAAQAgAAAAAAIASQAA=</HashCode>
+      <FileName>Modules\Input\InputManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.Modules.EventManager" Collapsed="true">
+    <Position X="24.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Modules\EventManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.Modules.GizmosModule" Collapsed="true">
+    <Position X="14" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAIgAABAAAAAARAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Modules\Editor\GizmosModule.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CosmosEngine.Modules.BehaviourManager" Collapsed="true">
+    <Position X="16.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAagAAAAACAAARAAAAAAAACAAAAAAAAAAAABAAAAAAA=</HashCode>
+      <FileName>Modules\Essentials\BehaviourManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.Modules.ObjectManager" Collapsed="true">
+    <Position X="18.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIgAAAAAAAAARAAAAAAIAAAgAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Modules\Essentials\ObjectManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.Modules.RenderManager" Collapsed="true">
+    <Position X="20.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAYgAABAAAAAARAAAAAAAAAgAAAAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>Modules\Essentials\RenderManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CosmosEngine.Modules.CollisionManager" Collapsed="true">
+    <Position X="23" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYgAAQAEQAAARAAAAAABCAAIAAAAAEAAIAAFAgAAQA=</HashCode>
+      <FileName>Modules\CollisionManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CosmosEngine.Modules.CoroutineManager" Collapsed="true">
+    <Position X="25.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAACAAABAAAAAAAAACAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>Modules\CoroutineManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 namespace CosmosEngine.InputModule
 {
 	/// <summary>Defines the keys on a keyboard.</summary>

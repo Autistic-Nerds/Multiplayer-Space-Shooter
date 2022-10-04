@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 namespace CosmosEngine.Async
 {
 	public enum CoroutineState

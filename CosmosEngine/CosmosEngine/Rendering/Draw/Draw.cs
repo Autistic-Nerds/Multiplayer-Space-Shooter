@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Vector2Xna = Microsoft.Xna.Framework.Vector2;

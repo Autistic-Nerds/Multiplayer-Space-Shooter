@@ -1,5 +1,4 @@
-﻿//Written by Philip Wittusen
-using System;
+﻿using System;
 
 namespace CosmosEngine
 {

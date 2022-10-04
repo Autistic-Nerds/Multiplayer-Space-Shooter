@@ -1,11 +1,17 @@
-﻿//Written by Philip Wittusen
-namespace CosmosEngine.PhysicsModule
+﻿namespace CosmosEngine.PhysicsModule
 {
 	public static partial class PhysicsIntersection
 	{
 		#region Circle / Circle
 		/// <summary>
 		/// Calculate collision between two circles.
+		/// </summary>
+		/// <param name="a">First <see cref="CosmosEngine.CircleCollider"/></param>
+		/// <param name="b">Second <see cref="CosmosEngine.CircleCollider"/></param>
+		/// <returns></returns>
+		public static bool CircleCircle(CircleCollider a, CircleCollider b) => CircleCircle(a.Position, a.Radius, b.Position, b.Radius);
+		/// <summary>
+		/// <inheritdoc cref="CircleCircle(CircleCollider, CircleCollider)"/>
 		/// </summary>
 		/// <param name="pA">Position of the first circle.</param>
 		/// <param name="rA">Radius of the first cricle.</param>
@@ -14,7 +20,7 @@ namespace CosmosEngine.PhysicsModule
 		/// <returns></returns>
 		public static bool CircleCircle(Vector2 pA, float rA, Vector2 pB, float rB) => CircleCircle(pA.X, pA.Y, rA, pB.X, pB.Y, rB);
 		/// <summary>
-		/// <inheritdoc cref="CircleCircle(Vector2, float, Vector2, float)"/>
+		/// <inheritdoc cref="CircleCircle(CircleCollider, CircleCollider)"/>
 		/// </summary>
 		/// <param name="x1">First circle centre X position.</param>
 		/// <param name="y1">First circle centre Y position.</param>

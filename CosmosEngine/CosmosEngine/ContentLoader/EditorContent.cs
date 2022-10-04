@@ -1,5 +1,4 @@
-﻿//Written by Philip Wittusen
-namespace CosmosEngine.Editor
+﻿namespace CosmosEngine.Editor
 {
 	public static class EditorContent
 	{

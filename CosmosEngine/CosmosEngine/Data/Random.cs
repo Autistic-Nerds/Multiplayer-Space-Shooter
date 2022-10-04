@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 namespace CosmosEngine
 {
 	public static class Random

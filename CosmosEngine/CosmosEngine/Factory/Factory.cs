@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 namespace CosmosEngine.Factory
 {
 	public abstract class Factory<T> : ScriptableObject, IFactory<T> where T : new()

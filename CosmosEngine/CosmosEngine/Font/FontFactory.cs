@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 using StbTrueTypeSharp;
 using System;
 using System.Collections.Generic;

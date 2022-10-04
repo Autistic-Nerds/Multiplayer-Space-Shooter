@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 using CosmosEngine.Converter;
 using System;
 using System.ComponentModel;

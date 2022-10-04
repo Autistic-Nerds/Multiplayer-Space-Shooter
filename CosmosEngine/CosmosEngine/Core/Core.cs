@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 using CosmosEngine.InputModule;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -71,12 +71,12 @@ namespace CosmosEngine.CoreModule
 			{
 				AddGameSystem(module);
 			}
+			applicationIsRunning = true;
 			SystemsInitialization();
 #if EDITOR
 			updateThreadSW = Stopwatch.StartNew();
 			renderThreadSW = Stopwatch.StartNew();
 #endif
-			applicationIsRunning = true;
 			base.Initialize();
 		}
 
@@ -202,6 +202,7 @@ namespace CosmosEngine.CoreModule
 
 			Rendering.Draw.Colour = Colour.White;
 			InputState.Update();
+			Input.Update(); //<--- Should be made into a Game System.
 			foreach (IModule system in gameModules)
 			{
 				if (system is IUpdateModule update)

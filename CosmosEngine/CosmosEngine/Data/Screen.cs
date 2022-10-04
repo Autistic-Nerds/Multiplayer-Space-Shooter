@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 using Microsoft.Xna.Framework.Graphics;
 using CosmosEngine.CoreModule;
 using System;

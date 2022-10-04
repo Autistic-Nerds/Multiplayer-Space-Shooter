@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Color = Microsoft.Xna.Framework.Color;

@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 #nullable enable
 namespace CosmosEngine
 {

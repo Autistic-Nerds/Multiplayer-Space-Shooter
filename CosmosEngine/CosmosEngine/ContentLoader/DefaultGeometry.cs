@@ -1,5 +1,4 @@
-﻿//Written by Philip Wittusen
-namespace CosmosEngine
+﻿namespace CosmosEngine
 {
 	public static class DefaultGeometry
 	{

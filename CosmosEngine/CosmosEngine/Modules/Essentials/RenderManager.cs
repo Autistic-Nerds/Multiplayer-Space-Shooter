@@ -1,19 +1,63 @@
-﻿//Written by Philip Wittusen
+﻿
 using CosmosEngine.CoreModule;
 using CosmosEngine.Collection;
 using CosmosEngine.Rendering;
+using System.Threading;
+using System.Collections.Generic;
 
 namespace CosmosEngine.Modules
 {
-	public sealed class RenderManager : ObserverManager<IRenderer, RenderManager>, IRenderModule
+	public sealed class RenderManager : ObserverManager<IRenderer, RenderManager>, IRenderModule, IStartModule
 	{
 		private readonly DirtyList<IRenderWorld> renderComponents = new DirtyList<IRenderWorld>();
 		private readonly DirtyList<IRenderUI> uiComponents = new DirtyList<IRenderUI>();
+
+		private readonly List<IRenderWorld> visibleRenderObjets = new List<IRenderWorld>();
+		private static readonly object m_lock = new object();
+		private bool waitingForRenderQueue;
+
+		private Thread renderThread;
 
 		public override void Initialize()
 		{
 			base.Initialize();
 			ObjectDelegater.CreateNewDelegation<IRenderer>(Subscribe);
+		}
+
+		public void Start()
+		{
+			renderThread = new Thread(new ThreadStart(CullRenderObjects));
+			renderThread.IsBackground = true;
+			renderThread.Start();
+		}
+
+		private void CullRenderObjects()
+		{
+			while (Application.IsRunning)
+			{
+				do
+				{
+					Thread.Sleep(System.TimeSpan.Zero);
+				} while (waitingForRenderQueue);
+
+				lock(m_lock)
+				{
+					visibleRenderObjets.Clear();
+					Camera mainCamera = Camera.Main;
+					foreach (IRenderWorld render in renderComponents)
+					{
+						if (render.Transform == null)
+							continue;
+						if (!render.Enabled)
+							continue;
+						if (mainCamera.InsideViewFrustrum(render.Transform.Position * 100))
+						{
+							visibleRenderObjets.Add(render);
+						}
+					}
+					waitingForRenderQueue = true;
+				}
+			}
 		}
 
 		protected override void Add(IRenderer item)
@@ -33,19 +77,47 @@ namespace CosmosEngine.Modules
 		public void RenderWorld()
 		{
 			Draw.Space = WorldSpace.World;
-			foreach (IRenderWorld obj in renderComponents)
+			lock (m_lock)
 			{
-				if (obj.Expired)
+				foreach (IRenderWorld obj in visibleRenderObjets)
 				{
-					renderComponents.IsDirty = true;
-					continue;
-				}
+					if (obj.Expired)
+					{
+						renderComponents.IsDirty = true;
+						continue;
+					}
 
-				if (obj.Enabled)
-				{
-					obj.Render();
+					if (obj.Enabled)
+					{
+						obj.Render();
+					}
 				}
+				waitingForRenderQueue = false;
 			}
+
+			//int culledObjects = 0;
+			//foreach (IRenderWorld obj in renderComponents)
+			//{
+			//	if (obj.Transform == null)
+			//		continue;
+			//	if (obj.Expired)
+			//	{
+			//		renderComponents.IsDirty = true;
+			//		continue;
+			//	}
+
+
+			//	if (obj.Enabled)
+			//	{
+			//		if (!Camera.Main.InsideViewFrustrum(obj.Transform.Position * 100))
+			//		{
+			//			culledObjects++;
+			//			continue;
+			//		}
+			//		obj.Render();
+			//	}
+			//}
+			//Debug.QuickLog($"Objects culled: {culledObjects}");
 		}
 
 		public void RenderUI()

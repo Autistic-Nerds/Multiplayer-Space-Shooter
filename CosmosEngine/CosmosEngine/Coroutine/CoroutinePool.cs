@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 using CosmosEngine.Factory;
 using CosmosEngine.ObjectPooling;
 

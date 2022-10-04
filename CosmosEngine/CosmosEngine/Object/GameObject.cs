@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 using CosmosEngine.Collection;
 using CosmosEngine.CoreModule;
 using CosmosEngine.Modules;

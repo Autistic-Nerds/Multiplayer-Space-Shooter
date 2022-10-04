@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 namespace CosmosEngine.InputModule
 {
 	[System.Flags]
@@ -17,6 +17,10 @@ namespace CosmosEngine.InputModule
 		/// Invokes Performed
 		/// </summary>
 		Hold = 1 << 2,
+		/// <summary>
+		/// Invokes Started and Canceled
+		/// </summary>
+		PressAndRelease = Interaction.Press | Interaction.Release,
 		/// <summary>
 		/// Invokes Started, Performed and Canceled
 		/// </summary>

@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 using CosmosEngine.Modules;
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ namespace CosmosEngine.CoreModule
 		/// Initialize is invoked only once, before the first frame and before start. Instantiation should not occur within Initialize, use Start instead.
 		/// </summary>
 		public override abstract void Initialize();
-		[System.Obsolete("The Load Content method is obsolete as content should be implemented using Eager Loading pattern. The method is not required for the Game to work and will be replaced in a future version.", false)]
+		[System.Obsolete("The Load Content method is obsolete as content should be implemented using Eager Loading pattern. The method is still required for the Game to work but might be replaced in a further version.", false)]
 		/// <summary>
 		/// Use AddContentLoader(IContentLoader) to load content files in this method.
 		/// </summary>
@@ -125,7 +125,7 @@ namespace CosmosEngine.CoreModule
 		/// <returns></returns>
 		public Game RemoveModule<T>() where T : IModule
 		{
-			if(!Core.ApplicationIsRunning)
+			if(Core.ApplicationIsRunning)
 			{
 				//Debug.Log($"Not possible to remove game modules once the game has been launched.", LogFormat.Error);
 				return this;
@@ -152,6 +152,9 @@ namespace CosmosEngine.CoreModule
 			}
 		}
 
+		/// <summary>
+		/// Use <see cref="CosmosEngine.CoreModule.Game.LaunchApplication"/> as the final augment to start the application.
+		/// </summary>
 		public void LaunchApplication()
 		{
 			StartApplication();

@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 using System.Runtime.InteropServices;
 
 namespace CosmosEngine.Async

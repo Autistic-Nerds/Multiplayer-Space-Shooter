@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 namespace CosmosEngine
 {
 	[System.Obsolete("The Vector2Int is deprecated and is missing a lot of functionality, it can still be used, but should be updated asap.", false)]

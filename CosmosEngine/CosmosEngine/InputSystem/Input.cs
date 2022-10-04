@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -7,7 +7,7 @@ using CosmosEngine.EventSystems;
 
 namespace CosmosEngine.InputModule
 {
-	[System.Obsolete("This input system is actually the newer Input System, but it will be replaced by a new Input System using the Game Module System. It's possible to use either, both or none InputManager and Input(System)", false)]
+	//[System.Obsolete("This input system is actually the newer Input System, but it will be replaced by a new Input System using the Game Module System. It's possible to use either, both or none InputManager and Input(System)", false)]
 	public static class Input
 	{
 		private const int MaxInputActions = ushort.MaxValue;

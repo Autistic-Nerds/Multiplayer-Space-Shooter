@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 using CosmosEngine.Modules;
 using System.Collections;
 using System.Collections.Generic;
@@ -168,6 +168,36 @@ namespace CosmosEngine
 		}
 #nullable disable
 		#endregion
+
+		#endregion
+
+		#region Conditional Methods
+		/// <summary>
+		/// Invoked when another object enters a trigger collider attached to this object.
+		/// </summary>
+		/// <param name="other">The other Collider involved in this collision.</param>
+		protected virtual void OnTriggerEnter(Collider other) //<- Collider2D collider
+		{
+
+		}
+
+		/// <summary>
+		/// Invoked when another object leaves a trigger collider attached to this object.
+		/// </summary>
+		/// <param name="other">The other Collider involved in this collision.</param>
+		protected virtual void OnTriggerExit(Collider other) //<- Collider2D collider
+		{
+
+		}
+
+		/// <summary>
+		/// Invoked when an incoming collider makes contact with this object's collider.
+		/// </summary>
+		/// <param name="collision">The Collision data associated with this collision event.</param>
+		protected virtual void OnCollision(Collision collision) //<- Collision2D collision
+		{
+
+		}
 
 		#endregion
 	}

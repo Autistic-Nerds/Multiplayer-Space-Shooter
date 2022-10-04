@@ -1,4 +1,4 @@
-﻿//Written by Philip Wittusen
+﻿
 namespace CosmosEngine.Modules
 {
 	public class Delegation<T> : IDelegation where T : class

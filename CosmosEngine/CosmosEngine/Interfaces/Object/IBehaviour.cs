@@ -1,10 +1,11 @@
-﻿//Written by Philip Wittusen
+﻿
 using System;
 
 namespace CosmosEngine.CoreModule
 {
 	public interface IBehaviour : IObject
 	{
+		Transform Transform { get; }
 #nullable enable
 		T? AddComponent<T>() where T : Component;
 		Component? AddComponent(Type componentType);
