@@ -14,7 +14,6 @@ namespace CosmosEngine.NetCode
 		private readonly List<IPEndPoint> connectedClients = new List<IPEndPoint>();
 		private readonly List<NetCodeIdentity> netCodeBehaviours = new List<NetCodeIdentity>();
 
-		private Timer serverTickTimer;
 		private NetCodeHandler handler;
 		private bool isServerConnection;
 		private double serverTickTime;
