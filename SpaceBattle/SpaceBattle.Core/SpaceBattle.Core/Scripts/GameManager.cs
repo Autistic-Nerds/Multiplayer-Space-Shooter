@@ -17,6 +17,7 @@ namespace SpaceBattle
 			SpriteRenderer spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
 			gameObject.AddComponent<Unit>("Interceptor", "Fast and agile unit with low firepower but great evasive abilities.");
 			spriteRenderer.Sprite = ArtContent.InterceptorPlayer;
+			gameObject.AddComponent<ControlInput>();
 
 		}
 

@@ -121,6 +121,30 @@
 /processorParam:TextureFormat=Color
 /build:Art/interceptorEnemy.png
 
+#begin Art/projectileEnemy.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/projectileEnemy.png
+
+#begin Art/projectilePlayer.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/projectilePlayer.png
+
 #begin Audio/laniakea-moire-main-version-06-01-11128.mp3
 /importer:Mp3Importer
 /processor:SongProcessor

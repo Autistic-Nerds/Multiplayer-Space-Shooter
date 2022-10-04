@@ -29,7 +29,7 @@ namespace SpaceBattle
         public float CurrentHealth { get => currentHealth; set => currentHealth = value; }
         public float RegenHealth { get => regenHealth; set => regenHealth = value; }
         public float RegenShield { get => regenShield; set => regenShield = value; }
-        public float Damage { get => Damage; set => Damage = value; }
+        public float Damage { get => damage; set => damage = value; }
         public float CurrentShield { get => currentShield; set => currentShield = value; }
         public float Speed { get => speed; set => speed = value; }
         public string Name { get => name; set => name = value; }
@@ -45,13 +45,20 @@ namespace SpaceBattle
             this.description = description;
         }
 
-        public void Start()
+        protected override void Start()
         {
             currentHealth = maxHealth;
             currentShield = MaxShield;
             isAlive = true;
         }
 
+        protected override void Update()
+        {
+            Debug.QuickLog(Transform.Position);
+            Debug.Log(InputManager.MousePosition);
+            Transform.RotateTowards(Camera.Main.ScreenToWorld(InputManager.MousePosition), 180f);
+        }
+        
         public void TakeDamage(float incDamage)
         {
             currentHealth -= incDamage;
@@ -70,7 +77,7 @@ namespace SpaceBattle
                     MaxHealth = 50,
                     MaxShield = 92,
                     TeamID = 1, // Set as # in player list
-                    Speed = 1.8f,
+                    Speed = 2.7f,
                     Damage = 8f,
                     RegenCooldown = 500, // 5 seconds
                     RegenHealth = 0.2f,

@@ -6,8 +6,8 @@ namespace SpaceBattle
     {
         private static Song adventure;
         private static Song chill;
-        private static Song epic;
-        private static Song gloomyCombat;
+        //private static Song epic;
+        //private static Song gloomyCombat;
 
         public static Song Adventure => adventure ??= GameManager.ContentManager.Load<Song>("Audio/Adventure");
         public static Song Chill => chill ??= GameManager.ContentManager.Load<Song>("Audio/Chill");
