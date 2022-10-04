@@ -15,17 +15,19 @@ namespace SpaceBattle
 		{
 			GameObject serverObject = new GameObject();
 			NetCodeServer server = serverObject.AddComponent<NetCodeServer>();
+
 			GameObject gameObject = new GameObject();
 			SpriteRenderer spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
 			gameObject.AddComponent<Unit>("Interceptor", "Fast and agile unit with low firepower but great evasive abilities.");
+			gameObject.AddComponent<NetCodeTransform>();
 			spriteRenderer.Sprite = ArtContent.InterceptorPlayer;
 			gameObject.AddComponent<ControlInput>();
 
-			GameObject obj = new GameObject("Mover");
-			obj.AddComponent<NetCodeIdentity>();
-			obj.AddComponent<NetCodeTransform>();
-			obj.AddComponent<NetworkMover>();
-			obj.AddComponent<SpriteRenderer>().Sprite = ArtContent.InterceptorEnemy;
+			//GameObject obj = new GameObject("Mover");
+			//obj.AddComponent<NetCodeIdentity>();
+			//obj.AddComponent<NetCodeTransform>();
+			//obj.AddComponent<NetworkMover>();
+			//obj.AddComponent<SpriteRenderer>().Sprite = ArtContent.InterceptorEnemy;
 		}
 
 		public override void Update()
