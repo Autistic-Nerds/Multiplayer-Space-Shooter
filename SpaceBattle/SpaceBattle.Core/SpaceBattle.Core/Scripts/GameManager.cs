@@ -1,5 +1,5 @@
 ﻿using CosmosEngine;
-using System.Drawing.Text;
+using CosmosEngine.NetCode;
 
 namespace SpaceBattle
 {
@@ -13,11 +13,14 @@ namespace SpaceBattle
 
 		public override void Start()
 		{
-			GameObject gameObject = new GameObject();
-			SpriteRenderer spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-			gameObject.AddComponent<Unit>("Interceptor", "Fast and agile unit with low firepower but great evasive abilities.");
-			spriteRenderer.Sprite = ArtContent.InterceptorPlayer;
+			GameObject serverObject = new GameObject();
+			NetCodeServer server = serverObject.AddComponent<NetCodeServer>();
 
+			GameObject obj = new GameObject("Mover");
+			obj.AddComponent<NetCodeIdentity>();
+			obj.AddComponent<NetCodeTransform>();
+			obj.AddComponent<NetworkMover>();
+			obj.AddComponent<SpriteRenderer>().Sprite = ArtContent.InterceptorEnemy;
 		}
 
 		public override void Update()

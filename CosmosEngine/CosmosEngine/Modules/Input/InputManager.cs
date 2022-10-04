@@ -112,42 +112,42 @@ namespace CosmosEngine
 		{
 			if (!Exist)
 				return;
-			Instance.AddInputButton(new InputButton(name, button));
+			Instance.AddInputButton(new InputButton(name.ToLower(), button));
 		}
 
 		public static void CreateButton(string name, MouseButton button)
 		{
 			if (!Exist)
 				return;
-			Instance.AddInputButton(new InputButton(name, button));
+			Instance.AddInputButton(new InputButton(name.ToLower(), button));
 		}
 
 		public static void CreateButton(string name, GamepadButton button)
 		{
 			if (!Exist)
 				return;
-			Instance.AddInputButton(new InputButton(name, button));
+			Instance.AddInputButton(new InputButton(name.ToLower(), button));
 		}
 
 		public static void CreateAxis(string name, Keys positive, Keys negative)
 		{
 			if (!Exist)
 				return;
-			Instance.AddInputButton(new InputButton(name, new Keys[] { positive }, new Keys[] { negative }));
+			Instance.AddInputButton(new InputButton(name.ToLower(), new Keys[] { positive }, new Keys[] { negative }));
 		}
 
 		public static void CreateAxis(string name, MouseButton positive, MouseButton negative)
 		{
 			if (!Exist)
 				return;
-			Instance.AddInputButton(new InputButton(name, new MouseButton[] { positive }, new MouseButton[] { negative }));
+			Instance.AddInputButton(new InputButton(name.ToLower(), new MouseButton[] { positive }, new MouseButton[] { negative }));
 		}
 
 		public static void CreateAxis(string name, GamepadButton positive, GamepadButton negative)
 		{
 			if (!Exist)
 				return;
-			Instance.AddInputButton(new InputButton(name, new GamepadButton[] { positive }, new GamepadButton[] { negative }));
+			Instance.AddInputButton(new InputButton(name.ToLower(), new GamepadButton[] { positive }, new GamepadButton[] { negative }));
 		}
 
 		private void AddInputButton(InputButton inputButton)
@@ -172,6 +172,7 @@ namespace CosmosEngine
 			if (!ActiveAndReady)
 				return 0f;
 
+			axis = axis.ToLower();
 			if (inputButtons.ContainsKey(axis) && inputButtons[axis].IsAxis)
 			{
 				InputButton input = inputButtons[axis];
@@ -192,6 +193,7 @@ namespace CosmosEngine
 			if (!ActiveAndReady)
 				return 0f;
 
+			axis = axis.ToLower();
 			if (inputButtons.ContainsKey(axis) && inputButtons[axis].IsAxis)
 			{
 				InputButton input = inputButtons[axis];
@@ -212,6 +214,7 @@ namespace CosmosEngine
 			if (!ActiveAndReady)
 				return false;
 
+			button = button.ToLower();
 			if (inputButtons.ContainsKey(button) && !inputButtons[button].IsAxis)
 			{
 				InputButton input = inputButtons[button];
@@ -231,6 +234,7 @@ namespace CosmosEngine
 			if (!ActiveAndReady)
 				return false;
 
+			button = button.ToLower();
 			if (inputButtons.ContainsKey(button) && !inputButtons[button].IsAxis)
 			{
 				InputButton input = inputButtons[button];
@@ -250,6 +254,7 @@ namespace CosmosEngine
 			if (!ActiveAndReady)
 				return false;
 
+			button = button.ToLower();
 			if (inputButtons.ContainsKey(button) && !inputButtons[button].IsAxis)
 			{
 				InputButton input = inputButtons[button];
