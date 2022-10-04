@@ -1,47 +1,58 @@
-using CosmosEngine.NetCode.Serialization;
+using CosmosEngine.Netcode.Serialization;
 using System;
 using System.Collections.Generic;
 
-namespace CosmosEngine.NetCode
+namespace CosmosEngine.Netcode
 {
-	public enum NetCodeMessageType
+	public enum NetcodeMessageType
 	{
 		Empty,
 		Connect,
 		Disconnect,
 		Data,
+		RPC,
 	}
 
 
 	[Serializable]
-	public class NetCodeMessage
+	public class NetcodeMessage
 	{
-		public NetCodeData Data { get; set; } 
+		public NetcodeData Data { get; set; } 
 	}
 
 	[Serializable]
-	public abstract class NetCodeData
+	public abstract class NetcodeData
 	{
-		public abstract NetCodeMessageType Type { get; }
+		public abstract NetcodeMessageType Type { get; }
 	}
 
 	[Serializable]
-	public class ClientConnectData : NetCodeData
+	public class ClientConnectData : NetcodeData
 	{
-		public override NetCodeMessageType Type => NetCodeMessageType.Connect;
+		public override NetcodeMessageType Type => NetcodeMessageType.Connect;
 	}
 
 	[Serializable]
-	public class ClientDisconnectData : NetCodeData
+	public class ClientDisconnectData : NetcodeData
 	{
-		public override NetCodeMessageType Type => NetCodeMessageType.Disconnect;
+		public override NetcodeMessageType Type => NetcodeMessageType.Disconnect;
 	}
 	
 	[Serializable]
-	public class SerializeNetCodeData : NetCodeData
+	public class SerializeNetcodeData : NetcodeData
 	{
 		public uint NetId { get; set; }
 		public List<SerializedObjectData> Data { get; set; } = new List<SerializedObjectData>();
-		public override NetCodeMessageType Type => NetCodeMessageType.Data;
+		public override NetcodeMessageType Type => NetcodeMessageType.Data;
+	}
+
+	[Serializable]
+	public class NetcodeRPC : NetcodeData
+	{
+		public uint NetId { get; set; }
+		public uint BehaviourId { get; set; }
+		public string Method { get; set; }
+		public List<string> Parameters { get; set; }
+		public override NetcodeMessageType Type => NetcodeMessageType.RPC;
 	}
 }

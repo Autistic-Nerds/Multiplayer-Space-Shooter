@@ -27,7 +27,6 @@
     <PackageReference Include="System.Data.SQLite" Version="1.0.116" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="NetCode\Test\" />
     <Folder Include="Rendering\SpriteBatch\" />
   </ItemGroup>
   <ItemGroup>

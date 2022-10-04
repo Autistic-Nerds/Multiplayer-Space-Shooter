@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
-public static class NetCodeHelper
+public static class NetcodeHelper
 {
 	public static bool IsSyncVar(this FieldInfo field)
 	{

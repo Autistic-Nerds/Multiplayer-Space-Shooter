@@ -4,12 +4,12 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CosmosEngine.NetCode
+namespace CosmosEngine.Netcode
 {
-	public class NetCodeHandler
+	public class NetcodeTransport
 	{
 		public const int SIO_UDP_CONNRESET = -1744830452;
-		private event Action<NetCodeMessage, IPEndPoint> onReceiveMessageEvent = delegate { };
+		private event Action<NetcodeMessage, IPEndPoint> onReceiveMessageEvent = delegate { };
 
 		private bool connected;
 
@@ -49,19 +49,19 @@ namespace CosmosEngine.NetCode
 			connected = false;
 			socket.Close();
 			RemoveAllListeners();
-			Debug.Log($"NetCodeHandler was disconnected");
+			Debug.Log($"NetcodeHandler was disconnected");
 		}
 
 		#region SEND
 
-		public void SendToServer(NetCodeMessage netCodeMessage)
+		public void SendToServer(NetcodeMessage netcodeMessage)
 		{
-			SendData(NetCodeSerializer.Serialize(netCodeMessage));
+			SendData(NetcodeSerializer.Serialize(netcodeMessage));
 		}
 
-		public void SendToClient(NetCodeMessage netCodeMessage, IPEndPoint groupEP)
+		public void SendToClient(NetcodeMessage netcodeMessage, IPEndPoint groupEP)
 		{
-			SendDataToEndPoint(NetCodeSerializer.Serialize(netCodeMessage), groupEP);
+			SendDataToEndPoint(NetcodeSerializer.Serialize(netcodeMessage), groupEP);
 		}
 
 		private void SendData(byte[] data)
@@ -110,9 +110,9 @@ namespace CosmosEngine.NetCode
 					string dataDecoded = Encoding.UTF8.GetString(data);
 					//Debug.Log($"RECIEVED: {dataDecoded} [{Encoding.UTF8.GetByteCount(dataDecoded)}] -- {endPoint}");
 
-					NetCodeMessage message = new NetCodeMessage()
+					NetcodeMessage message = new NetcodeMessage()
 					{
-						Data = NetCodeSerializer.Deserialize(data),
+						Data = NetcodeSerializer.Deserialize(data),
 					};
 					onReceiveMessageEvent.Invoke(message, endPoint);
 				}
@@ -127,12 +127,12 @@ namespace CosmosEngine.NetCode
 			}
 		}
 
-		public void AddListener(Action<NetCodeMessage, IPEndPoint> callback)
+		public void AddListener(Action<NetcodeMessage, IPEndPoint> callback)
 		{
 			onReceiveMessageEvent += callback;
 		}
 
-		public void RemvoeListener(Action<NetCodeMessage, IPEndPoint> callback)
+		public void RemvoeListener(Action<NetcodeMessage, IPEndPoint> callback)
 		{
 			onReceiveMessageEvent -= callback;
 		}

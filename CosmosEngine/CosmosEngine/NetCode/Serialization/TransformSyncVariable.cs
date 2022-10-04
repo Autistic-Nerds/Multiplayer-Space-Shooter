@@ -1,4 +1,4 @@
-﻿namespace DigittalWhale.NetCode
+﻿namespace DigittalWhale.Netcode
 {
 	internal enum TransformSyncVariable
 	{

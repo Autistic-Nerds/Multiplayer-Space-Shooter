@@ -1,13 +1,13 @@
 ﻿using CosmosEngine;
-using CosmosEngine.NetCode;
+using CosmosEngine.Netcode;
 
 namespace SpaceBattle
 {
-	internal class NetworkMover : NetCodeBehaviour
+	internal class NetworkMover : NetcodeBehaviour
 	{
 		protected override void Update()
 		{
-			if(FindObjectOfType<NetCodeServer>().IsServerConnection)
+			if(FindObjectOfType<NetcodeServer>().IsServerConnection)
 			{
 				Move();
 			}

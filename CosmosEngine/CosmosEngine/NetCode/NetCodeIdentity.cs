@@ -1,15 +1,16 @@
 using CosmosEngine;
-using CosmosEngine.NetCode.Serialization;
+using CosmosEngine.Collection;
+using CosmosEngine.Netcode.Serialization;
 using System.Collections.Generic;
 
-namespace CosmosEngine.NetCode
+namespace CosmosEngine.Netcode
 {
-	public class NetCodeIdentity : GameBehaviour
+	public class NetcodeIdentity : GameBehaviour
 	{
-		private readonly Dictionary<uint, NetCodeBehaviour> netCodeBehaviours = new Dictionary<uint, NetCodeBehaviour>();
+		private readonly Dictionary<uint, NetcodeBehaviour> netcodeBehaviours = new Dictionary<uint, NetcodeBehaviour>();
 
 		private uint netId;
-		private uint netCodeId;
+		private uint netcodeId;
 
 		private bool isServer;
 		private bool isClient;
@@ -71,30 +72,50 @@ namespace CosmosEngine.NetCode
 
 		private void UpdateBehaviourDictionary()
 		{
-			NetCodeBehaviour[] behaviours = GetComponents<NetCodeBehaviour>();
+			NetcodeBehaviour[] behaviours = GetComponents<NetcodeBehaviour>();
 			for(int i = 0; i < behaviours.Length; i++)
 			{
-				NetCodeBehaviour netBehaviour = behaviours[i];
-				if(!netCodeBehaviours.ContainsValue(netBehaviour))
+				NetcodeBehaviour netBehaviour = behaviours[i];
+				if(!netcodeBehaviours.ContainsValue(netBehaviour))
 				{
-					netBehaviour.NetBehaviourIndex = ++netCodeId;
-					netCodeBehaviours.Add(netCodeId, netBehaviour);
+					netBehaviour.NetBehaviourIndex = ++netcodeId;
+					netcodeBehaviours.Add(netcodeId, netBehaviour);
 				}
 			}
 		}
 
-		//Convert object fields to data stream and hand them to NetCodeServer.
-		internal SerializeNetCodeData SerializeFromObject()
+		#region Remote Procedure Call (RPC)
+
+		public void Rpc(string methodName, params object[] parameters)
 		{
-			SerializeNetCodeData serializeData = new SerializeNetCodeData()
+			//Does this client have authority? Or should we ignore it?
+			//Does the method has the right Attribute?
+			//Does any method actually exist with these parameters.
+
+			//If all are true - Add to RpcCallstack
+		}
+
+		internal void RecieveRpc(NetcodeRPC call)
+		{
+			netcodeBehaviours[call.BehaviourId].RecieveRpc(call);
+		}
+
+		#endregion
+
+		#region Serialize
+
+		//Convert object fields to data stream and hand them to NetcodeServer.
+		internal SerializeNetcodeData SerializeFromObject()
+		{
+			SerializeNetcodeData serializeData = new SerializeNetcodeData()
 			{
 				NetId = netId,
 			};
-			foreach (NetCodeBehaviour behaviour in netCodeBehaviours.Values)
+			foreach (NetcodeBehaviour behaviour in netcodeBehaviours.Values)
 			{
 				if (!behaviour.Enabled)
 					continue;
-				SerializedObjectData data = behaviour.Serialize();
+				SerializedObjectData data = behaviour.OnSerialize();
 				if (!string.IsNullOrWhiteSpace(data.Stream))
 				{
 					serializeData.Data.Add(data);
@@ -103,15 +124,21 @@ namespace CosmosEngine.NetCode
 			return serializeData;
 		}
 
-		//Recieve data stream from NetCodeServer and update the objects field.
-		internal void DeserializeToObject(SerializeNetCodeData serializeData)
+		#endregion
+
+		#region Deserialize
+
+		//Recieve data stream from NetcodeServer and update the objects field.
+		internal void DeserializeToObject(SerializeNetcodeData serializeData)
 		{
 			foreach (SerializedObjectData data in serializeData.Data)
 			{
 				ObjectStream stream = new ObjectStream();
 				stream.Stream = data.Stream;
-				netCodeBehaviours[data.BehaviourId].Deserialize(stream);
+				netcodeBehaviours[data.BehaviourId].OnDeserialize(stream);
 			}
 		}
+
+		#endregion
 	}
 }
