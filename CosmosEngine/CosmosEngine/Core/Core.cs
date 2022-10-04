@@ -50,8 +50,8 @@ namespace CosmosEngine.CoreModule
 
 		protected override void Initialize()
 		{
-			graphics.PreferredBackBufferWidth = 1600; // Screen.Width;
-			graphics.PreferredBackBufferHeight = 900; // Screen.Height;
+			graphics.PreferredBackBufferWidth = 1280; // Screen.Width;
+			graphics.PreferredBackBufferHeight = 720; // Screen.Height;
 			graphics.IsFullScreen = false;
 
 			IsFixedTimeStep = false;

@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using Color = Microsoft.Xna.Framework.Color;
 namespace CosmosEngine
 {
+	[System.Serializable]
 	/// <summary>
 	/// Representation of RGBA colours.
 	/// </summary>

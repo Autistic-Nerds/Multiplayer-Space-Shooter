@@ -1,6 +1,7 @@
 ﻿
 using CosmosEngine.Collection;
 using CosmosEngine.CoreModule;
+using CosmosEngine.EventSystems;
 using CosmosEngine.Modules;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace CosmosEngine
 		private List<string> tag;
 		private Transform transform;
 		private readonly DirtyList<Component> components = new DirtyList<Component>();
-		private event Action gameObjectModifiedEvent = delegate { };
+		private readonly Event<GameObjectChange> gameObjectModifiedEvent = new Event<GameObjectChange>();
 
 		/// <summary>
 		/// The tag of this <see cref="CosmosEngine.GameObject"/>. A tag can be used to identify a game object.
@@ -37,7 +38,7 @@ namespace CosmosEngine
 		/// <summary>
 		/// An event invoked whenever changes happen to this <see cref="CosmosEngine.GameObject"/>, such as a <see cref="CosmosEngine.Component"/> being added or removed.
 		/// </summary>
-		public Action ModifiedEvent { get => gameObjectModifiedEvent; set => gameObjectModifiedEvent = value; }
+		public Event<GameObjectChange> ModifiedEvent => gameObjectModifiedEvent;
 
 		public override bool DestroyOnLoad 
 		{
@@ -157,7 +158,7 @@ namespace CosmosEngine
 			if (components.IsDirty)
 			{
 				components.RemoveAll(item => item.Expired);
-				ModifiedEvent?.Invoke();
+				ModifiedEvent?.Invoke(GameObjectChange.ComponentStructure);
 				components.IsDirty = false;
 			}
 		}
@@ -268,7 +269,8 @@ namespace CosmosEngine
 			{
 				foreach (Type c in requireComponent.RequiredComponents)
 				{
-					AddComponent(Activator.CreateInstance(c) as Component);
+					if (!GetComponent(c))
+						AddComponent(Activator.CreateInstance(c) as Component);
 				}
 			}
 			AddComponent(component);
@@ -288,7 +290,7 @@ namespace CosmosEngine
 				components.Add(component);
 			component.AssignGameObject(this);
 			component.Initialize();
-			ModifiedEvent?.Invoke();
+			ModifiedEvent?.Invoke(GameObjectChange.ComponentStructure);
 		}
 
 		/// <summary>

@@ -65,10 +65,10 @@ namespace CosmosEngine.UI
 		internal override void AssignGameObject(GameObject gameObject)
 		{
 			base.AssignGameObject(gameObject);
-			GameObject.ModifiedEvent += GameObjectModified;
+			GameObject.ModifiedEvent.Add(GameObjectModified);
 		}
 
-		private void GameObjectModified()
+		private void GameObjectModified(GameObjectChange change)
 		{
 			if (attachedImage == null)
 				attachedImage = GameObject.GetComponent<Image>();
@@ -76,7 +76,7 @@ namespace CosmosEngine.UI
 
 		protected override void OnDestroy()
 		{
-			GameObject.ModifiedEvent -= GameObjectModified;
+			GameObject.ModifiedEvent.Remove(GameObjectModified);
 		}
 
 		protected override void Update()

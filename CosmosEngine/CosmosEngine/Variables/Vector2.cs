@@ -6,6 +6,7 @@ using Matrix = Microsoft.Xna.Framework.Matrix;
 
 namespace CosmosEngine
 {
+	[Serializable]
 	[TypeConverter(typeof(Vector2Converter))]
 	/// <summary>
 	/// <see cref="CosmosEngine.Vector2"/> are scaled in unit space, unlike <see cref="Microsoft.Xna.Framework.Vector2"/> which uses pixel space.

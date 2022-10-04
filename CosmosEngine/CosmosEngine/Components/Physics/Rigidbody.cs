@@ -32,10 +32,10 @@ namespace CosmosEngine
 		internal override void AssignGameObject(GameObject gameObject)
 		{
 			base.AssignGameObject(gameObject);
-			gameObject.ModifiedEvent += GameObjectModified;
+			gameObject.ModifiedEvent.Add(GameObjectModified);
 			gameObjectModified = true;
 		}
 
-		private void GameObjectModified() => gameObjectModified = true;
+		private void GameObjectModified(GameObjectChange change) => gameObjectModified = true;
 	}
 }

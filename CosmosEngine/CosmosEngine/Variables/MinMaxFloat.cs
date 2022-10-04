@@ -1,6 +1,7 @@
 ﻿
 namespace CosmosEngine
 {
+	[System.Serializable]
 	public struct MinMaxFloat
 	{
 		private float min;

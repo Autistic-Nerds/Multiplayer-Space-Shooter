@@ -19,13 +19,15 @@
     <TrimmerRootAssembly Include="Microsoft.Xna.Framework.Content.ContentTypeReader" Visible="false" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="6.0.4" />
-    <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.0.1641" />
-    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
-    <PackageReference Include="StbTrueTypeSharp" Version="1.26.9" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.115.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="6.0.9" />
+    <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />
+    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="StbTrueTypeSharp" Version="1.26.11" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.116" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="NetCode\Test\" />
     <Folder Include="Rendering\SpriteBatch\" />
   </ItemGroup>
   <ItemGroup>

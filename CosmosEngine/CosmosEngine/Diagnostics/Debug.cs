@@ -2,6 +2,7 @@
 using CosmosEngine.Diagnostics;
 using CosmosEngine.Modules;
 using CosmosEngine.Rendering;
+using Newtonsoft.Json.Bson;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -38,6 +39,17 @@ namespace CosmosEngine
 			displayUi = true;
 			displayPosition = new Vector2(5, 45);
 		}
+
+		/// <summary>
+		/// Logs a warning message to the debug console.
+		/// </summary>
+		/// <param name="message"></param>
+		public static void LogWarning(object message) => Log(message, LogFormat.Warning);
+		/// <summary>
+		/// Logs an error message to the debug console.
+		/// </summary>
+		/// <param name="message"></param>
+		public static void LogError(object message) => Log(message, LogFormat.Error);
 
 		/// <summary>
 		/// <inheritdoc cref="CosmosEngine.Debug.Log(object, LogFormat, object, LogOption)"/>
