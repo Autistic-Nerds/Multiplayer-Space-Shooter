@@ -1,8 +1,9 @@
 ﻿using CosmosEngine;
+using System.Drawing;
 
 namespace SpaceBattle
 {
-    public class Unit
+    public class Unit : GameBehaviour
     {
         private int maxHealth;
         private int maxShield;
@@ -74,6 +75,7 @@ namespace SpaceBattle
                     RegenCooldown = 500, // 5 seconds
                     RegenHealth = 0.2f,
                     RegenShield = 0.3f,
+                    Graphics = ArtContent.InterceptorPlayer
                 };
             return Interceptor;
             }

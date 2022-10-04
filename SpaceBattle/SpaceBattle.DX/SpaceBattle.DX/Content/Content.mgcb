@@ -121,3 +121,27 @@
 /processorParam:TextureFormat=Color
 /build:Art/interceptorEnemy.png
 
+#begin Audio/laniakea-moire-main-version-06-01-11128.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Audio/laniakea-moire-main-version-06-01-11128.mp3
+
+#begin Audio/our-champion-anuch-main-version-02-11-18750.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Audio/our-champion-anuch-main-version-02-11-18750.mp3;Audio/Epic.mp3
+
+#begin Audio/the-golden-path-roger-gabalda-main-version-03-03-11000.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Audio/the-golden-path-roger-gabalda-main-version-03-03-11000.mp3
+
+#begin Audio/voyager-little-planet-main-version-02-33-13595.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Audio/voyager-little-planet-main-version-02-33-13595.mp3;Audio/Adventure.mp3
+
