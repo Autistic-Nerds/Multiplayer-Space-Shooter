@@ -82,7 +82,7 @@ namespace SpaceBattle
                     RegenCooldown = 500, // 5 seconds
                     RegenHealth = 0.2f,
                     RegenShield = 0.3f,
-                    Graphics = ArtContent.InterceptorPlayer
+                    Graphics = ArtContent.Interceptor
                 };
             return Interceptor;
             }

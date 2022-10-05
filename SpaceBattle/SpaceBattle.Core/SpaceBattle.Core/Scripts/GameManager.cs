@@ -13,6 +13,7 @@ namespace SpaceBattle
 
 		public override void Start()
 		{
+			AudioManager.Play();
 			GameObject serverObject = new GameObject();
 			NetCodeServer server = serverObject.AddComponent<NetCodeServer>();
 
@@ -20,7 +21,7 @@ namespace SpaceBattle
 			SpriteRenderer spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
 			gameObject.AddComponent<Unit>("Interceptor", "Fast and agile unit with low firepower but great evasive abilities.");
 			gameObject.AddComponent<NetCodeTransform>();
-			spriteRenderer.Sprite = ArtContent.InterceptorPlayer;
+			spriteRenderer.Sprite = ArtContent.Interceptor;
 			gameObject.AddComponent<ControlInput>();
 
 			//GameObject obj = new GameObject("Mover");

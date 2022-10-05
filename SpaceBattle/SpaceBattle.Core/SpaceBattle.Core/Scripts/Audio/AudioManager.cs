@@ -11,7 +11,7 @@ namespace SpaceBattle
         {
             MediaPlayer.Volume = 0.3f;
             MediaPlayer.Play(AudioContent.Adventure);
-            MediaPlayer.Play(AudioContent.Chill);
+            //MediaPlayer.Play(AudioContent.Epic);
             MediaPlayer.IsRepeating = true;
         }
 
