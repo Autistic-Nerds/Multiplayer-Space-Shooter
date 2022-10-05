@@ -16,7 +16,7 @@ namespace CosmosEngine.Netcode
 		private object[] syncVarDirtyBits;
 		private Dictionary<string, FieldInfo> syncVarFields;
 
-		public NetcodeIdentity NetIdentity => netIdentity;
+		public NetcodeIdentity NetIdentity => netIdentity ??= GetComponent<NetcodeIdentity>();
 
 		/// <summary>
 		/// <inheritdoc cref="Netcode.NetcodeIdentity.IsServer"/>
@@ -45,7 +45,7 @@ namespace CosmosEngine.Netcode
 
 		internal uint NetBehaviourIndex { get => behaviourIndex; set => behaviourIndex = value; }
 
-		protected override void Start()
+		protected override void Awake()
 		{
 			InitialSyncFields();
 		}
@@ -67,7 +67,15 @@ namespace CosmosEngine.Netcode
 			}
 		}
 
-		public void Rpc(string methodName, params object[] parameters) => NetIdentity.Rpc(methodName, parameters);
+		public void Rpc(string methodName, params object[] parameters)
+		{
+			if(NetIdentity == null)
+			{
+				Debug.Log($"Attempting to send RPC without an NetcodeIdentity", LogFormat.Warning);
+				return;
+			}
+			NetIdentity.Rpc(methodName, NetBehaviourIndex, parameters);
+		}
 
 		internal void RecieveRpc(NetcodeRPC call)
 		{

@@ -19,7 +19,7 @@ namespace SpaceBattle
 			GameObject obj = new GameObject("Mover");
 			obj.AddComponent<NetcodeIdentity>();
 			obj.AddComponent<NetcodeTransform>();
-			obj.AddComponent<NetworkMover>();
+			obj.AddComponent<TestPlayer>();
 			obj.AddComponent<SpriteRenderer>().Sprite = ArtContent.InterceptorEnemy;
 		}
 

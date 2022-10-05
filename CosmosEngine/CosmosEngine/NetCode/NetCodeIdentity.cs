@@ -2,12 +2,16 @@ using CosmosEngine;
 using CosmosEngine.Collection;
 using CosmosEngine.Netcode.Serialization;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Metadata;
 
 namespace CosmosEngine.Netcode
 {
 	public class NetcodeIdentity : GameBehaviour
 	{
+		private const BindingFlags Flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic;
 		private readonly Dictionary<uint, NetcodeBehaviour> netcodeBehaviours = new Dictionary<uint, NetcodeBehaviour>();
+		private readonly Dictionary<uint, RemoteProcedureCall> remoteProcedureCalls = new Dictionary<uint, RemoteProcedureCall>();
 
 		private uint netId;
 		private uint netcodeId;
@@ -45,6 +49,8 @@ namespace CosmosEngine.Netcode
 		protected override void Awake()
 		{
 			Init();
+
+			int i = 0;
 		}
 
 		private void Init()
@@ -86,8 +92,40 @@ namespace CosmosEngine.Netcode
 
 		#region Remote Procedure Call (RPC)
 
-		public void Rpc(string methodName, params object[] parameters)
+		public void Rpc(string methodName, uint index, params object[] parameters)
 		{
+			Debug.Log($"RPC: {methodName}");
+
+			NetcodeBehaviour behaviour = netcodeBehaviours[index];
+			System.Type[] parametersType = new System.Type[parameters.Length];
+			for (int i = 0; i < parameters.Length; i++)
+				parametersType[i] = parameters[i].GetType();
+			MethodInfo[] methodInfos = behaviour.GetType().GetMethods(Flags);
+			MethodInfo method = null;
+			foreach (MethodInfo info in methodInfos)
+			{
+				if(info.Name.Equals(methodName))
+				{
+					if(info.GetParameters().Length == parameters.Length)
+					{
+						method = info;
+						break;
+					}
+				}
+			}
+
+			if(method == null)
+			{
+				Debug.Log($"No method named {methodName} match parameters {parameters.ParametersTypeToString()} on {GetType().FullName}. RPC was unsuccessful.", LogFormat.Error);
+				return;
+			}
+
+			RemoteProcedureCall rpc = new RemoteProcedureCall();
+			if(remoteProcedureCalls.ContainsKey(index))
+			{
+
+			}
+
 			//Does this client have authority? Or should we ignore it?
 			//Does the method has the right Attribute?
 			//Does any method actually exist with these parameters.

@@ -24,15 +24,27 @@ namespace CosmosEngine.Netcode
 				position = Random.InsideUnitCircle();
 			}
 
-			if (!FindObjectOfType<NetcodeServer>().IsServerConnection)
+			if (FindObjectOfType<NetcodeServer>().IsServerConnection)
 			{
-				if (InputManager.GetMouseButtonDown(0))
-				{
-					Vector2 pos = Camera.Main.ScreenToWorld(InputManager.MousePosition);
-					elapsed = Time.ElapsedTime - elapsed;
-					Rpc(nameof(TestMethodServerRpc), pos, elapsed);
-				}
 			}
+			if (InputManager.GetMouseButtonDown(0))
+			{
+				Vector2 pos = Camera.Main.ScreenToWorld(InputManager.MousePosition);
+				elapsed = Time.ElapsedTime - elapsed;
+				Rpc(nameof(TestMethodServerRpc), pos, elapsed);
+			}
+		}
+
+		[ServerRPC]
+		private void TestMethodServerRpc()
+		{
+			Debug.Log($"SERVER RPC RECIEVED");
+		}
+
+		[ServerRPC]
+		private void TestMethodServerRpc(Vector2 newPosition)
+		{
+			Debug.Log($"SERVER RPC RECIEVED: {newPosition}");
 		}
 
 		[ServerRPC]

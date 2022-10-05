@@ -39,6 +39,9 @@ namespace CosmosEngine.Netcode
 							NetcodeMessageType.Connect => netcodeData.ToObject<ClientConnectData>(),
 							NetcodeMessageType.Disconnect => netcodeData.ToObject<ClientDisconnectData>(),
 							NetcodeMessageType.Data => netcodeData.ToObject<SerializeNetcodeData>(),
+							NetcodeMessageType.RPC => netcodeData.ToObject<NetcodeRPC>(),
+							NetcodeMessageType.RTT => netcodeData.ToObject<RoundtripTime>(),
+							NetcodeMessageType.Acknowledge => throw new System.NotImplementedException(),
 							_ => default(NetcodeData),
 						};
 						return p;

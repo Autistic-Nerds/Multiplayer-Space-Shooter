@@ -11,6 +11,8 @@ namespace CosmosEngine.Netcode
 		Disconnect,
 		Data,
 		RPC,
+		RTT,
+		Acknowledge
 	}
 
 
@@ -54,5 +56,11 @@ namespace CosmosEngine.Netcode
 		public string Method { get; set; }
 		public List<string> Parameters { get; set; }
 		public override NetcodeMessageType Type => NetcodeMessageType.RPC;
+	}
+
+	[Serializable]
+	public class RoundtripTime : NetcodeData
+	{
+		public override NetcodeMessageType Type => NetcodeMessageType.RTT;
 	}
 }

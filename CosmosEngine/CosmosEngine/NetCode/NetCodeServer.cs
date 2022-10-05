@@ -3,6 +3,9 @@ using System.Net;
 using System.Timers;
 using System.Text;
 using CosmosEngine;
+using System.Net.NetworkInformation;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace CosmosEngine.Netcode
 {
@@ -14,7 +17,6 @@ namespace CosmosEngine.Netcode
 		private readonly List<IPEndPoint> connectedClients = new List<IPEndPoint>();
 		private readonly List<NetcodeIdentity> netcodeBehaviours = new List<NetcodeIdentity>();
 
-		private Timer serverTickTimer;
 		private NetcodeTransport handler;
 		private bool isServerConnection;
 		private double serverTickTime;
@@ -23,24 +25,24 @@ namespace CosmosEngine.Netcode
 		private readonly object serializationLock = new object();
 		private readonly List<SerializeNetcodeData> serializationObjects = new List<SerializeNetcodeData>();
 
+		private List<byte[]> recievedMessages = new List<byte[]>();
+
 		public bool IsServerConnection => isServerConnection;
 
 		protected override void Update()
 		{
-			if(handler == null)
+			if (handler == null)
 			{
-				if(InputManager.GetButtonDown("c"))
+				if (InputManager.GetButtonDown("c"))
 				{
 					StartClient();
 				}
-				else if(InputManager.GetButtonDown("z"))
+				else if (InputManager.GetButtonDown("z"))
 				{
 					StartServer();
 				}
 			}
 		}
-
-		private List<byte[]> recievedMessages = new List<byte[]>();
 
 		private void StartServer()
 		{
@@ -78,7 +80,6 @@ namespace CosmosEngine.Netcode
 			OnConnected();
 		}
 
-
 		public void OnConnected()
 		{
 			handler.AddListener(ReceiveNetcodeMessage);
@@ -91,6 +92,9 @@ namespace CosmosEngine.Netcode
 
 		protected override void LateUpdate()
 		{
+			if (handler == null)
+				return;
+
 			if (Time.ElapsedTime >= (serverTickTime))
 			{
 				if (isServerConnection)
@@ -205,7 +209,7 @@ namespace CosmosEngine.Netcode
 				case NetcodeMessageType.Connect:
 					if (isServerConnection)
 					{
-						Debug.Log($"Received Client Connect Message from - {endPoint.ToString()}");
+						Debug.Log($"Received Client Connect Message from - {endPoint}");
 						connectedClients.Add(endPoint);
 						handler.SendToClient(new NetcodeMessage()
 						{
@@ -215,6 +219,22 @@ namespace CosmosEngine.Netcode
 					else
 					{
 						Debug.Log($"Received Accepted Connect Message");
+					}
+					break;
+				case NetcodeMessageType.RPC:
+
+					break;
+				case NetcodeMessageType.RTT:
+					if(isServerConnection)
+					{
+						NetcodeMessage msg = new NetcodeMessage()
+						{
+							Data = new RoundtripTime(),
+						};
+						handler.SendToClient(msg, endPoint);
+					}
+					else
+					{
 					}
 					break;
 			}
