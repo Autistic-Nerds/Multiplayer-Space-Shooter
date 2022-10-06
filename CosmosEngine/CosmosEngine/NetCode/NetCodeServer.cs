@@ -9,11 +9,11 @@ using System.Threading;
 
 namespace CosmosEngine.Netcode
 {
-	public class NetcodeServer : GameBehaviour
+	public class NetcodeServer : Singleton<NetcodeServer>
 	{
 		private string ip = "127.0.0.1";
 		private int port = 7000;
-		private float serverTickRate = 30;
+		private float serverTickRate = 5;
 		private readonly List<IPEndPoint> connectedClients = new List<IPEndPoint>();
 		private readonly List<NetcodeIdentity> netcodeBehaviours = new List<NetcodeIdentity>();
 
@@ -25,9 +25,13 @@ namespace CosmosEngine.Netcode
 		private readonly object serializationLock = new object();
 		private readonly List<SerializeNetcodeData> serializationObjects = new List<SerializeNetcodeData>();
 
+		private readonly object m_rpcLock = new object();
+		private List<NetcodeRPC> remoteProcedureCalls = new List<NetcodeRPC>();
+
 		private List<byte[]> recievedMessages = new List<byte[]>();
 
 		public bool IsServerConnection => isServerConnection;
+		public NetcodeTransport NetcodeHandler => handler;
 
 		protected override void Update()
 		{
@@ -83,6 +87,7 @@ namespace CosmosEngine.Netcode
 		public void OnConnected()
 		{
 			handler.AddListener(ReceiveNetcodeMessage);
+			handler.SimulateLatency(60, 0.2f);
 		}
 
 		private void StartObjectSerialization()
@@ -110,6 +115,18 @@ namespace CosmosEngine.Netcode
 				serverTickDifference = ((double)Time.ElapsedTime - serverTickTime - delta);
 				serverTickTime = Time.ElapsedTime + delta;
 			}
+
+			lock(m_rpcLock)
+			{
+				foreach(NetcodeRPC rpc in remoteProcedureCalls)
+				{
+					foreach (RemoteProcedureCall call in rpc.Call)
+					{
+						Debug.Log($"RPC for netID: {rpc.NetId} - Method: {call.Method} with args: {call.Args}");
+					}
+				}
+				remoteProcedureCalls.Clear();
+			}
 		}
 
 		private void SerializeNetIdentityObjects()
@@ -117,14 +134,14 @@ namespace CosmosEngine.Netcode
 			NetcodeIdentity[] netObjects = FindObjectsOfType<NetcodeIdentity>();
 			foreach (NetcodeIdentity netIdentity in netObjects)
 			{
+				SerializeNetcodeData data = netIdentity.SerializeFromObject();
+				if (data.Data.Count == 0)
+					continue;
 				NetcodeMessage message = new NetcodeMessage()
 				{
-					Data = netIdentity.SerializeFromObject(),
+					Data = data,
 				};
 
-				byte[] vs = NetcodeSerializer.Serialize(message);
-				//Debug.Log($"SEND: {System.Text.Encoding.UTF8.GetString(vs)}");
-				recievedMessages.Add(vs);
 				foreach (IPEndPoint client in connectedClients)
 				{
 					handler.SendToClient(message, client);
@@ -166,6 +183,8 @@ namespace CosmosEngine.Netcode
 			}
 		}
 
+		#region Object Serialize and Deserialize
+
 		private void DeserializeNetIdentityObjects()
 		{
 			List<NetcodeIdentity> netObjects = new List<NetcodeIdentity>();
@@ -196,6 +215,8 @@ namespace CosmosEngine.Netcode
 			}
 		}
 
+		#endregion
+
 		private void ReceiveNetcodeMessage(NetcodeMessage message, IPEndPoint endPoint)
 		{
 			if (message == null)
@@ -222,7 +243,21 @@ namespace CosmosEngine.Netcode
 					}
 					break;
 				case NetcodeMessageType.RPC:
-
+					NetcodeRPC rpc = (NetcodeRPC)message.Data;
+					if(isServerConnection)
+					{
+						handler.SendToClient(new NetcodeMessage()
+						{
+							Data = new NetcodeAcknowledge()
+							{
+								Key = rpc.ReliableKey,
+							}
+						}, endPoint);
+					}
+					lock (m_rpcLock)
+					{
+						remoteProcedureCalls.Add(rpc);
+					}
 					break;
 				case NetcodeMessageType.RTT:
 					if(isServerConnection)

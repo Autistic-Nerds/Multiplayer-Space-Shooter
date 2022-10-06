@@ -1,6 +1,7 @@
 using CosmosEngine;
 using CosmosEngine.Collection;
 using CosmosEngine.Netcode.Serialization;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Metadata;
@@ -9,9 +10,12 @@ namespace CosmosEngine.Netcode
 {
 	public class NetcodeIdentity : GameBehaviour
 	{
+		private uint reliableMsgKey;
+
 		private const BindingFlags Flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic;
 		private readonly Dictionary<uint, NetcodeBehaviour> netcodeBehaviours = new Dictionary<uint, NetcodeBehaviour>();
-		private readonly Dictionary<uint, RemoteProcedureCall> remoteProcedureCalls = new Dictionary<uint, RemoteProcedureCall>();
+		private readonly Dictionary<uint, RemoteProcedureCall> remoteProduceCallQueue = new Dictionary<uint, RemoteProcedureCall>();
+		private readonly List<NetcodeRPC> remoteProduceCallAwaiting = new List<NetcodeRPC>();
 
 		private uint netId;
 		private uint netcodeId;
@@ -49,8 +53,6 @@ namespace CosmosEngine.Netcode
 		protected override void Awake()
 		{
 			Init();
-
-			int i = 0;
 		}
 
 		private void Init()
@@ -90,6 +92,40 @@ namespace CosmosEngine.Netcode
 			}
 		}
 
+		protected override void LateUpdate()
+		{
+			InvokeRemoteProduceCalls();
+		}
+
+		private void InvokeRemoteProduceCalls()
+		{
+			if (FindObjectOfType<NetcodeServer>().IsServerConnection)
+				return;
+
+			if(remoteProduceCallQueue.Count > 0)
+			{
+				NetcodeRPC rpc = new NetcodeRPC()
+				{
+					ReliableKey = reliableMsgKey++,
+					NetId = this.NetId,
+				};
+
+				if (reliableMsgKey == uint.MaxValue)
+					reliableMsgKey = 0;
+
+				foreach(RemoteProcedureCall call in remoteProduceCallQueue.Values)
+				{
+					rpc.Add(call);
+				}
+				NetcodeServer.Instance.NetcodeHandler.SendToServer(new NetcodeMessage()
+				{
+					Data = rpc,
+				});
+				remoteProduceCallAwaiting.Add(rpc);
+				remoteProduceCallQueue.Clear();
+			}
+		}
+
 		#region Remote Procedure Call (RPC)
 
 		public void Rpc(string methodName, uint index, params object[] parameters)
@@ -120,10 +156,20 @@ namespace CosmosEngine.Netcode
 				return;
 			}
 
-			RemoteProcedureCall rpc = new RemoteProcedureCall();
-			if(remoteProcedureCalls.ContainsKey(index))
+			RemoteProcedureCall rpc = new RemoteProcedureCall()
 			{
+				Method = methodName,
+				Index = index,
+				Args = JsonConvert.SerializeObject(parameters),
+			};
 
+			if(remoteProduceCallQueue.ContainsKey(index))
+			{
+				remoteProduceCallQueue[index] = rpc;
+			}
+			else
+			{
+				remoteProduceCallQueue.Add(index, rpc);
 			}
 
 			//Does this client have authority? Or should we ignore it?
@@ -133,9 +179,9 @@ namespace CosmosEngine.Netcode
 			//If all are true - Add to RpcCallstack
 		}
 
-		internal void RecieveRpc(NetcodeRPC call)
+		internal void RecieveRpc(RemoteProcedureCall call)
 		{
-			netcodeBehaviours[call.BehaviourId].RecieveRpc(call);
+
 		}
 
 		#endregion
@@ -143,7 +189,7 @@ namespace CosmosEngine.Netcode
 		#region Serialize
 
 		//Convert object fields to data stream and hand them to NetcodeServer.
-		internal SerializeNetcodeData SerializeFromObject()
+		internal SerializeNetcodeData? SerializeFromObject()
 		{
 			SerializeNetcodeData serializeData = new SerializeNetcodeData()
 			{

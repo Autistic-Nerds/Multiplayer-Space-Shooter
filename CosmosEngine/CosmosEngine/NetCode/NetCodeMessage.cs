@@ -12,7 +12,7 @@ namespace CosmosEngine.Netcode
 		Data,
 		RPC,
 		RTT,
-		Acknowledge
+		ACK
 	}
 
 
@@ -49,18 +49,34 @@ namespace CosmosEngine.Netcode
 	}
 
 	[Serializable]
-	public class NetcodeRPC : NetcodeData
+	public class NetcodeRPC : NetcodeData, IEquatable<NetcodeRPC>
 	{
+		public uint ReliableKey { get; set; }
 		public uint NetId { get; set; }
-		public uint BehaviourId { get; set; }
-		public string Method { get; set; }
-		public List<string> Parameters { get; set; }
+		public List<RemoteProcedureCall> Call { get; set; } = new List<RemoteProcedureCall>();
 		public override NetcodeMessageType Type => NetcodeMessageType.RPC;
+		public void Add(RemoteProcedureCall rpc) => Call.Add(rpc);
+
+		public bool Equals(NetcodeRPC other)
+		{
+			if(NetId == other.NetId)
+			{
+				return true;
+			}
+			return false;
+		}
 	}
 
 	[Serializable]
 	public class RoundtripTime : NetcodeData
 	{
 		public override NetcodeMessageType Type => NetcodeMessageType.RTT;
+	}
+
+	[Serializable]
+	public class NetcodeAcknowledge : NetcodeData
+	{
+		public uint Key { get; set; }
+		public override NetcodeMessageType Type => NetcodeMessageType.ACK;
 	}
 }

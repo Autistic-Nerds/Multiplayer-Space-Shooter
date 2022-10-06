@@ -77,10 +77,10 @@ namespace CosmosEngine.Netcode
 			NetIdentity.Rpc(methodName, NetBehaviourIndex, parameters);
 		}
 
-		internal void RecieveRpc(NetcodeRPC call)
+		internal void RecieveRpc(RemoteProcedureCall call)
 		{
-			MethodInfo method = GetType().GetMethod(call.Method, Flags);
-			method.Invoke(method, null);
+			//MethodInfo method = GetType().GetMethod(call.Method, Flags);
+			//method.Invoke(method, null);
 		}
 
 		#region Serialize / Deserialize

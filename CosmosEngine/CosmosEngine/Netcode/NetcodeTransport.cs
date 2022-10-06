@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -16,6 +17,38 @@ namespace CosmosEngine.Netcode
 		private UdpClient socket;
 		private IPEndPoint endPoint;
 		private Task receiveMessageTask;
+
+		private readonly object m_queueLock = new object();
+		private bool useSiumlatedLatency;
+		private List<Msg> messageQueue;
+		private float packageLoss;
+		private float latency;
+		private Task latencySimulatorTask;
+
+		private struct Msg
+		{
+			public byte[] Data { get; set; }
+			public float TimeToSend { get; set; }
+			public bool Alive { get; set; }
+			public IPEndPoint EndPoint { get; set; }
+		}
+
+		public void SimulateLatency(float latency, float packageLoss)
+		{
+			if(useSiumlatedLatency)
+			{
+				useSiumlatedLatency = false;
+				return;
+			}
+
+			messageQueue = new List<Msg>();
+			useSiumlatedLatency = true;
+			this.latency = latency;
+			this.packageLoss = packageLoss;
+
+			latencySimulatorTask = new Task(LatencySendData);
+			latencySimulatorTask.Start();
+		}
 
 		public void SetupServer(int port)
 		{
@@ -76,6 +109,7 @@ namespace CosmosEngine.Netcode
 				Debug.Log($"Can't send data to server when not connected.", LogFormat.Warning);
 				return;
 			}
+			Console.WriteLine($"SEND: {Encoding.UTF8.GetString(data)}");
 			//Debug.Log($"Sending Message: {Encoding.UTF8.GetString(data)}");
 			socket.Send(data, data.Length);
 		}
@@ -93,7 +127,65 @@ namespace CosmosEngine.Netcode
 				return;
 			}
 			//Debug.Log($"Sending Message: {Encoding.UTF8.GetString(data)} to {groupEP}");
-			socket.Send(data, data.Length, groupEP);
+			Console.WriteLine($"SEND: {Encoding.UTF8.GetString(data)} TO {groupEP}");
+			if (useSiumlatedLatency)
+			{
+				if (Random.Value < packageLoss)
+				{
+					Console.WriteLine($"Package was lost");
+					return;
+				}
+
+				Msg msg = new Msg()
+				{
+					Data = data,
+					TimeToSend = Time.ElapsedTime + (latency / 1000f),
+					EndPoint = groupEP,
+					Alive = true,
+				};
+				lock (m_queueLock)
+				{
+					messageQueue.Add(msg);
+				}
+			}
+			else
+				socket.Send(data, data.Length, groupEP);
+		}
+
+		private async void LatencySendData()
+		{
+			while (useSiumlatedLatency && connected)
+			{
+				do
+				{
+					await Task.Delay(TimeSpan.Zero);
+				} while (messageQueue.Count == 0);
+
+				float time = Time.ElapsedTime;
+				lock (m_queueLock)
+				{
+					for (int i = 0; i < messageQueue.Count; i++)
+					{
+						Msg msg = messageQueue[i];
+						if (msg.TimeToSend < time)
+						{
+							if (msg.EndPoint != null)
+							{
+								//Sending as server
+								socket.Send(msg.Data, msg.Data.Length, msg.EndPoint);
+							}
+							else
+							{
+								//Sending as client
+								socket.Send(msg.Data, msg.Data.Length);
+							}
+							msg.Alive = false;
+							messageQueue[i] = msg;
+						}
+					}
+					messageQueue.RemoveAll(item => !item.Alive);
+				}
+			}
 		}
 
 		#endregion
@@ -108,6 +200,7 @@ namespace CosmosEngine.Netcode
 				{
 					byte[] data = socket.Receive(ref endPoint);
 					string dataDecoded = Encoding.UTF8.GetString(data);
+					Console.WriteLine($"RECIEVED: {dataDecoded} FROM {endPoint}");
 					//Debug.Log($"RECIEVED: {dataDecoded} [{Encoding.UTF8.GetByteCount(dataDecoded)}] -- {endPoint}");
 
 					NetcodeMessage message = new NetcodeMessage()

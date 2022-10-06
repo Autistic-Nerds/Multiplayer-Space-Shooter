@@ -16,7 +16,7 @@ namespace SpaceBattle
 			GameObject serverObject = new GameObject();
 			NetcodeServer server = serverObject.AddComponent<NetcodeServer>();
 
-			GameObject obj = new GameObject("Mover");
+			GameObject obj = new GameObject("Net Object");
 			obj.AddComponent<NetcodeIdentity>();
 			obj.AddComponent<NetcodeTransform>();
 			obj.AddComponent<TestPlayer>();
