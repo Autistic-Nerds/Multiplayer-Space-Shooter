@@ -57,6 +57,14 @@ namespace SpaceBattle
             Debug.QuickLog(Transform.Position);
             Debug.Log(InputManager.MousePosition);
             Transform.RotateTowards(Camera.Main.ScreenToWorld(InputManager.MousePosition), 180f);
+            if(TeamID != 1)
+            {
+                Graphics = ArtContent.InterceptorEnemy;
+            }
+            else
+            {
+                Graphics = ArtContent.Interceptor;
+            }
         }
         
         public void TakeDamage(float incDamage)
