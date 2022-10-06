@@ -14,7 +14,7 @@ namespace CosmosEngine.Netcode
 		private string ip = "127.0.0.1";
 		private int port = 7000;
 		private float serverTickRate = 5;
-		private readonly List<IPEndPoint> connectedClients = new List<IPEndPoint>();
+		private readonly List<NetcodeClient> connectedClients = new List<NetcodeClient>();
 		private readonly List<NetcodeIdentity> netcodeBehaviours = new List<NetcodeIdentity>();
 
 		private NetcodeTransport handler;
@@ -231,7 +231,7 @@ namespace CosmosEngine.Netcode
 					if (isServerConnection)
 					{
 						Debug.Log($"Received Client Connect Message from - {endPoint}");
-						connectedClients.Add(endPoint);
+						connectedClients.Add(new NetcodeClient(endPoint));
 						handler.SendToClient(new NetcodeMessage()
 						{
 							Data = new ClientConnectData(),
@@ -250,7 +250,7 @@ namespace CosmosEngine.Netcode
 						{
 							Data = new NetcodeAcknowledge()
 							{
-								Key = rpc.ReliableKey,
+								Key = rpc.RPI,
 							}
 						}, endPoint);
 					}

@@ -51,7 +51,10 @@ namespace CosmosEngine.Netcode
 	[Serializable]
 	public class NetcodeRPC : NetcodeData, IEquatable<NetcodeRPC>
 	{
-		public uint ReliableKey { get; set; }
+		/// <summary>
+		/// Reliable package index.
+		/// </summary>
+		public ulong RPI { get; set; }
 		public uint NetId { get; set; }
 		public List<RemoteProcedureCall> Call { get; set; } = new List<RemoteProcedureCall>();
 		public override NetcodeMessageType Type => NetcodeMessageType.RPC;

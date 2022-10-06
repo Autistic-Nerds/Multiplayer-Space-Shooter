@@ -128,8 +128,22 @@ namespace CosmosEngine.Netcode
 
 		#region Remote Procedure Call (RPC)
 
+		/// <summary>
+		/// Invokes a remote procedure call on this <see cref="CosmosEngine.Netcode.NetcodeIdentity"/>, a method must be marked for RPC operation.A method must be marked with an appropriate attribute to work as an RPC.
+		/// <list type="bullet">
+		/// <item><see cref="CosmosEngine.Netcode.ClientRPCAttribute"/>: Can only be invoked by clients, this is also true if the client is the host. This method will be executed on the server. For a client to invoke an RPC they must have Authority on the Netcode Object they call it on.</item>
+		/// <item><see cref="CosmosEngine.Netcode.ServerRPCAttribute"/>: Can only be invoked by the server, this is also true if a client is the host. This method will be executed on all clients connected to the server.</item>
+		/// </list>
+		/// <para>It is possible to use RPC for overload methods, but can't differentiate between overload methods with the same number of parameters. Method overloading used for RPC should always have different parameter count.</para>
+		/// </summary>
+		/// <param name="methodName"></param>
+		/// <param name="index"></param>
+		/// <param name="parameters"></param>
 		public void Rpc(string methodName, uint index, params object[] parameters)
 		{
+			if (FindObjectOfType<NetcodeServer>() == null || FindObjectOfType<NetcodeServer>().NetcodeHandler == null)
+				return;
+
 			Debug.Log($"RPC: {methodName}");
 
 			NetcodeBehaviour behaviour = netcodeBehaviours[index];
@@ -177,6 +191,7 @@ namespace CosmosEngine.Netcode
 			//Does any method actually exist with these parameters.
 
 			//If all are true - Add to RpcCallstack
+			RecieveRpc(rpc);
 		}
 
 		internal void RecieveRpc(RemoteProcedureCall call)
