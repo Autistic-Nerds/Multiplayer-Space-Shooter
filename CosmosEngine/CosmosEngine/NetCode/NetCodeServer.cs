@@ -17,7 +17,7 @@ namespace CosmosEngine.Netcode
 		private readonly List<NetcodeClient> connectedClients = new List<NetcodeClient>();
 		private readonly List<NetcodeIdentity> netcodeBehaviours = new List<NetcodeIdentity>();
 
-		private NetcodeTransport handler;
+		private NetcodeTransport transport;
 		private bool isServerConnection;
 		private double serverTickTime;
 		private double serverTickDifference;
@@ -31,11 +31,11 @@ namespace CosmosEngine.Netcode
 		private List<byte[]> recievedMessages = new List<byte[]>();
 
 		public bool IsServerConnection => isServerConnection;
-		public NetcodeTransport NetcodeHandler => handler;
+		public NetcodeTransport NetcodeTransport => transport ??= new NetcodeTransport();
 
 		protected override void Update()
 		{
-			if (handler == null)
+			if (!NetcodeHandler.IsConnected)
 			{
 				if (InputManager.GetButtonDown("c"))
 				{
@@ -53,12 +53,14 @@ namespace CosmosEngine.Netcode
 			if (!Application.IsRunning)
 				return;
 			Debug.Log($"Start Server");
-			handler = new NetcodeTransport();
-			handler.SetupServer(port);
+			transport = new NetcodeTransport();
+			transport.SetupServer(port);
 
 			StartObjectSerialization();
 			isServerConnection = true;
 			OnConnected();
+			NetcodeHandler.IsServer = true;
+			NetcodeHandler.IsClient = true;
 		}
 
 		private void StartClient()
@@ -69,9 +71,9 @@ namespace CosmosEngine.Netcode
 
 			if (IPAddress.TryParse(ip, out IPAddress address))
 			{
-				handler = new NetcodeTransport();
-				handler.SetupClient(address, port);
-				handler.SendToServer(new NetcodeMessage()
+				transport = new NetcodeTransport();
+				transport.SetupClient(address, port);
+				transport.SendToServer(new NetcodeMessage()
 				{
 					Data = new ClientConnectData(),
 				});
@@ -82,12 +84,16 @@ namespace CosmosEngine.Netcode
 				return;
 			}
 			OnConnected();
+			NetcodeHandler.IsClient = true;
 		}
+
+		public void SimulateLatency(float latency, float packageLoss) => NetcodeTransport.SimulateLatency(latency, packageLoss);
 
 		public void OnConnected()
 		{
-			handler.AddListener(ReceiveNetcodeMessage);
-			handler.SimulateLatency(60, 0.2f);
+			transport.AddListener(ReceiveNetcodeMessage);
+			//transport.SimulateLatency(1500, 0.0f);
+			NetcodeHandler.IsConnected = true;
 		}
 
 		private void StartObjectSerialization()
@@ -97,7 +103,7 @@ namespace CosmosEngine.Netcode
 
 		protected override void LateUpdate()
 		{
-			if (handler == null)
+			if (transport == null)
 				return;
 
 			if (Time.ElapsedTime >= (serverTickTime))
@@ -118,11 +124,17 @@ namespace CosmosEngine.Netcode
 
 			lock(m_rpcLock)
 			{
-				foreach(NetcodeRPC rpc in remoteProcedureCalls)
+				List<NetcodeIdentity> netObjects = new List<NetcodeIdentity>(FindObjectsOfType<NetcodeIdentity>());
+				foreach (NetcodeRPC rpc in remoteProcedureCalls)
 				{
-					foreach (RemoteProcedureCall call in rpc.Call)
+					NetcodeIdentity identity = netObjects.Find(item => item.NetId == rpc.NetId);
+					if (identity != null)
 					{
-						Debug.Log($"RPC for netID: {rpc.NetId} - Method: {call.Method} with args: {call.Args}");
+						foreach (RemoteProcedureCall call in rpc.Call)
+						{
+							identity.ExecuteRpc(call);
+							Debug.Log($"RPC for netID: {rpc.NetId} - Method: {call.Method} with args: {call.Args}");
+						}
 					}
 				}
 				remoteProcedureCalls.Clear();
@@ -144,7 +156,7 @@ namespace CosmosEngine.Netcode
 
 				foreach (IPEndPoint client in connectedClients)
 				{
-					handler.SendToClient(message, client);
+					transport.SendToClient(message, client);
 				}
 			}
 		}
@@ -182,6 +194,19 @@ namespace CosmosEngine.Netcode
 				serializationObjects.Clear();
 			}
 		}
+
+		#region Send
+
+		public void SendToConnectedClients(NetcodeMessage message)
+		{
+			Debug.Log($"Sending global message to all clients: {connectedClients.Count}");
+			foreach(NetcodeClient client in connectedClients)
+			{
+				NetcodeTransport.SendToClient(message, client);
+			}
+		}
+
+		#endregion
 
 		#region Object Serialize and Deserialize
 
@@ -232,7 +257,7 @@ namespace CosmosEngine.Netcode
 					{
 						Debug.Log($"Received Client Connect Message from - {endPoint}");
 						connectedClients.Add(new NetcodeClient(endPoint));
-						handler.SendToClient(new NetcodeMessage()
+						transport.SendToClient(new NetcodeMessage()
 						{
 							Data = new ClientConnectData(),
 						}, endPoint);
@@ -244,9 +269,9 @@ namespace CosmosEngine.Netcode
 					break;
 				case NetcodeMessageType.RPC:
 					NetcodeRPC rpc = (NetcodeRPC)message.Data;
-					if(isServerConnection)
+					if (isServerConnection)
 					{
-						handler.SendToClient(new NetcodeMessage()
+						transport.SendToClient(new NetcodeMessage()
 						{
 							Data = new NetcodeAcknowledge()
 							{
@@ -266,7 +291,7 @@ namespace CosmosEngine.Netcode
 						{
 							Data = new RoundtripTime(),
 						};
-						handler.SendToClient(msg, endPoint);
+						transport.SendToClient(msg, endPoint);
 					}
 					else
 					{
@@ -277,8 +302,8 @@ namespace CosmosEngine.Netcode
 
 		private void OnApplicationQuit()
 		{
-			if (handler != null)
-				handler.Disconnect();
+			if (transport != null)
+				transport.Disconnect();
 		}
 	}
 }

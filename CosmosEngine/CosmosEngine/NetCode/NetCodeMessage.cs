@@ -54,7 +54,7 @@ namespace CosmosEngine.Netcode
 		/// <summary>
 		/// Reliable package index.
 		/// </summary>
-		public ulong RPI { get; set; }
+		public uint RPI { get; set; }
 		public uint NetId { get; set; }
 		public List<RemoteProcedureCall> Call { get; set; } = new List<RemoteProcedureCall>();
 		public override NetcodeMessageType Type => NetcodeMessageType.RPC;

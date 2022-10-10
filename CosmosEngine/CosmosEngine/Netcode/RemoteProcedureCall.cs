@@ -18,12 +18,12 @@ namespace CosmosEngine.Netcode
 		//Remove the RPC from the call queue.
 		public string Method { get; set; }
 		public uint Index { get; set; }
-		public uint ReliablePackage { get; set; }
-		public string Args { get; set; }
+		public uint RPI { get; set; }
+		public string[] Args { get; set; }
 
 		public int CompareTo(RemoteProcedureCall other)
 		{
-			return ReliablePackage.CompareTo(other.ReliablePackage);
+			return RPI.CompareTo(other.RPI);
 		}
 
 		public bool Equals(RemoteProcedureCall other)
@@ -32,7 +32,7 @@ namespace CosmosEngine.Netcode
 			{
 				if (Method.Equals(other.Method))
 				{
-					return Args.Equals(other.Args, StringComparison.CurrentCultureIgnoreCase);
+					//return Args.Equals(other.Args, StringComparison.CurrentCultureIgnoreCase);
 				}
 			}
 			return false;

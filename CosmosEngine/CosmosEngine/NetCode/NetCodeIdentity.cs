@@ -26,6 +26,10 @@ namespace CosmosEngine.Netcode
 		private bool hasAuthority;
 
 		/// <summary>
+		/// 
+		/// </summary>
+		public bool IsConnected => NetcodeHandler.IsConnected;
+		/// <summary>
 		/// Returns <see langword="true"/> if this object was instantiated and is controlled by the server.
 		/// </summary>
 		public bool IsServer { get => isServer; internal set => isServer = value; }
@@ -99,14 +103,11 @@ namespace CosmosEngine.Netcode
 
 		private void InvokeRemoteProduceCalls()
 		{
-			if (FindObjectOfType<NetcodeServer>().IsServerConnection)
-				return;
-
 			if(remoteProduceCallQueue.Count > 0)
 			{
 				NetcodeRPC rpc = new NetcodeRPC()
 				{
-					ReliableKey = reliableMsgKey++,
+					RPI = reliableMsgKey++,
 					NetId = this.NetId,
 				};
 
@@ -117,10 +118,20 @@ namespace CosmosEngine.Netcode
 				{
 					rpc.Add(call);
 				}
-				NetcodeServer.Instance.NetcodeHandler.SendToServer(new NetcodeMessage()
+				if(NetcodeHandler.IsServer)
 				{
-					Data = rpc,
-				});
+					NetcodeServer.Instance.SendToConnectedClients(new NetcodeMessage()
+					{
+						Data = rpc,
+					});
+				}
+				else if(NetcodeHandler.IsClient)
+				{
+					NetcodeServer.Instance.NetcodeTransport.SendToServer(new NetcodeMessage()
+					{
+						Data = rpc,
+					});
+				}
 				remoteProduceCallAwaiting.Add(rpc);
 				remoteProduceCallQueue.Clear();
 			}
@@ -141,7 +152,7 @@ namespace CosmosEngine.Netcode
 		/// <param name="parameters"></param>
 		public void Rpc(string methodName, uint index, params object[] parameters)
 		{
-			if (FindObjectOfType<NetcodeServer>() == null || FindObjectOfType<NetcodeServer>().NetcodeHandler == null)
+			if (!NetcodeHandler.IsConnected)
 				return;
 
 			Debug.Log($"RPC: {methodName}");
@@ -150,13 +161,14 @@ namespace CosmosEngine.Netcode
 			System.Type[] parametersType = new System.Type[parameters.Length];
 			for (int i = 0; i < parameters.Length; i++)
 				parametersType[i] = parameters[i].GetType();
+
 			MethodInfo[] methodInfos = behaviour.GetType().GetMethods(Flags);
 			MethodInfo method = null;
 			foreach (MethodInfo info in methodInfos)
 			{
-				if(info.Name.Equals(methodName))
+				if (info.Name.Equals(methodName))
 				{
-					if(info.GetParameters().Length == parameters.Length)
+					if (info.GetParameters().Length == parameters.Length)
 					{
 						method = info;
 						break;
@@ -164,17 +176,23 @@ namespace CosmosEngine.Netcode
 				}
 			}
 
-			if(method == null)
+			if (method == null)
 			{
 				Debug.Log($"No method named {methodName} match parameters {parameters.ParametersTypeToString()} on {GetType().FullName}. RPC was unsuccessful.", LogFormat.Error);
 				return;
 			}
 
+			string[] args = new string[parameters.Length];
+			for(int i = 0; i < parameters.Length; i++)
+			{
+				args[i] = JsonConvert.SerializeObject(parameters[i]);
+			}
 			RemoteProcedureCall rpc = new RemoteProcedureCall()
 			{
 				Method = methodName,
+				RPI = reliableMsgKey++,
 				Index = index,
-				Args = JsonConvert.SerializeObject(parameters),
+				Args = args,
 			};
 
 			if(remoteProduceCallQueue.ContainsKey(index))
@@ -189,14 +207,33 @@ namespace CosmosEngine.Netcode
 			//Does this client have authority? Or should we ignore it?
 			//Does the method has the right Attribute?
 			//Does any method actually exist with these parameters.
-
 			//If all are true - Add to RpcCallstack
-			RecieveRpc(rpc);
 		}
 
-		internal void RecieveRpc(RemoteProcedureCall call)
+		internal void ExecuteRpc(RemoteProcedureCall call)
 		{
+			NetcodeBehaviour behaviour = netcodeBehaviours[call.Index];
+			if(behaviour != null)
+			{
+				MethodInfo[] methodOnBehaviour = behaviour.GetType().GetMethods(Flags);
+				foreach(MethodInfo method in methodOnBehaviour)
+				{
+					if(!method.Name.Equals(call.Method))
+						continue;
 
+					ParameterInfo[] methodParameters = method.GetParameters();
+					if (methodParameters.Length != call.Args.Length)
+						continue;
+
+					object[] args = new object[call.Args.Length];
+					for(int i = 0; i < args.Length; i++)
+					{
+						args[i] = JsonConvert.DeserializeObject(call.Args[i], methodParameters[i].ParameterType);
+					}
+					method.Invoke(behaviour, args);
+					break;
+				}
+			}
 		}
 
 		#endregion

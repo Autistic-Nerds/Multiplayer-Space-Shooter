@@ -24,39 +24,43 @@ namespace CosmosEngine.Netcode
 				position = Random.InsideUnitCircle();
 			}
 
-			if (FindObjectOfType<NetcodeServer>().IsServerConnection)
+			if (NetcodeHandler.IsConnected)
 			{
+				if (NetcodeHandler.IsClient)
+				{
+					if (InputManager.GetMouseButtonDown(0))
+					{
+						Vector2 pos = Camera.Main.ScreenToWorld(InputManager.MousePosition);
+						elapsed = Time.ElapsedTime - elapsed;
+						//Rpc(nameof(TestMethodServerRpc), pos, elapsed);
+						Rpc(nameof(Shoot), pos);
+					}
+				}
 			}
-			if (InputManager.GetMouseButtonDown(0))
-			{
-				Vector2 pos = Camera.Main.ScreenToWorld(InputManager.MousePosition);
-				elapsed = Time.ElapsedTime - elapsed;
-				Rpc(nameof(TestMethodServerRpc), pos, elapsed);
-			}
-		}
-
-		[ServerRPC]
-		private void TestMethodServerRpc()
-		{
-			Debug.Log($"SERVER RPC RECIEVED");
-		}
-
-		[ServerRPC]
-		private void TestMethodServerRpc(Vector2 newPosition)
-		{
-			Debug.Log($"SERVER RPC RECIEVED: {newPosition}");
-		}
-
-		[ServerRPC]
-		private void TestMethodServerRpc(Vector2 newPosition, float timeSinceLast)
-		{
-			Debug.Log($"SERVER RPC RECIEVED: {newPosition} - {timeSinceLast:F2}");
 		}
 
 		[ClientRPC]
-		private void TestExecuteClientRpc(Vector2 newPosition, float timeSinceLast)
+		private void Teleport(Vector2 newPosition)
 		{
-			Debug.Log($"CLIENT RPC RECIEVED: {newPosition} - {timeSinceLast:F2}");
+			Transform.Position = newPosition;
+		}
+
+		[ClientRPC]
+		private void Shoot(Vector2 pos)
+		{
+			Colour rndColour = Colour.Random;
+			PlaceObject(pos, rndColour);
+			Rpc(nameof(PlaceObject), pos, rndColour);
+		}
+
+		[ServerRPC]
+		private void PlaceObject(Vector2 pos, Colour colour)
+		{
+			GameObject obj = new GameObject("Projectile");
+			obj.AddComponent<SpriteRenderer>().Sprite = DefaultGeometry.Circle;
+			obj.GetComponent<SpriteRenderer>().Colour = colour;
+			obj.Transform.LocalScale = new Vector2(0.25f, 0.25f);
+			obj.Transform.Position = pos;
 		}
 
 		public override void Serialize(ref NetcodeWriter stream)

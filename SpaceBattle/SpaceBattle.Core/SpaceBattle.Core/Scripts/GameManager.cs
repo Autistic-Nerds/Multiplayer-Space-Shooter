@@ -15,11 +15,12 @@ namespace SpaceBattle
 		{
 			GameObject serverObject = new GameObject();
 			NetcodeServer server = serverObject.AddComponent<NetcodeServer>();
+			server.SimulateLatency(150, 0.5f);
 
 			GameObject obj = new GameObject("Net Object");
 			obj.AddComponent<NetcodeIdentity>();
 			obj.AddComponent<NetcodeTransform>();
-			obj.AddComponent<TestPlayer>();
+			obj.AddComponent<Shooter>();
 			obj.AddComponent<SpriteRenderer>().Sprite = ArtContent.InterceptorEnemy;
 		}
 

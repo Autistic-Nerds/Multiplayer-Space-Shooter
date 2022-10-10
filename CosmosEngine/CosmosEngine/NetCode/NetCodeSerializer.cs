@@ -41,7 +41,7 @@ namespace CosmosEngine.Netcode
 							NetcodeMessageType.Data => netcodeData.ToObject<SerializeNetcodeData>(),
 							NetcodeMessageType.RPC => netcodeData.ToObject<NetcodeRPC>(),
 							NetcodeMessageType.RTT => netcodeData.ToObject<RoundtripTime>(),
-							NetcodeMessageType.ACK => throw new System.NotImplementedException(),
+							NetcodeMessageType.ACK => netcodeData.ToObject<NetcodeAcknowledge>(),
 							_ => default(NetcodeData),
 						};
 						return p;

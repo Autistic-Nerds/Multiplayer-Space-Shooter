@@ -19,6 +19,11 @@ namespace CosmosEngine.Netcode
 		public NetcodeIdentity NetIdentity => netIdentity ??= GetComponent<NetcodeIdentity>();
 
 		/// <summary>
+		/// <inheritdoc cref="Netcode.NetcodeIdentity.IsConnected"></inheritdoc>/>
+		/// </summary>
+		public bool IsConnected => NetIdentity.IsConnected;
+
+		/// <summary>
 		/// <inheritdoc cref="Netcode.NetcodeIdentity.IsServer"/>
 		/// </summary>
 		public bool IsServer => NetIdentity.IsServer;
@@ -26,7 +31,7 @@ namespace CosmosEngine.Netcode
 		/// <summary>
 		/// <inheritdoc cref="Netcode.NetcodeIdentity.IsClient"/>
 		/// </summary>
-		public bool IsClient => NetIdentity.IsClient;
+		public bool IsClient => NetIdentity.IsClient && NetIdentity;
 
 		/// <summary>
 		/// <inheritdoc cref="Netcode.NetcodeIdentity.IsLocal"/>
