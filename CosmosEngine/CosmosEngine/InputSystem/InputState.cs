@@ -33,6 +33,8 @@ namespace CosmosEngine
 		public static Vector2 MouseDelta => mouseDelta;
 		public static Vector2 MouseScrollWheel => mouseScrollWheel;
 		public static Vector2 MouseScrollWheelDelta => mouseScrollWheelDelta;
+		internal static KeyboardState KeyboardState => keyboardState;
+		internal static KeyboardState PreviousKeyboardState => previousKeyboardState;
 
 		public static void Update()
 		{
@@ -47,6 +49,7 @@ namespace CosmosEngine
 			AnyKeyPressed();
 			CompareMouseState();
 		}
+
 		private static void AnyKeyPressed()
 		{
 			//Are any keyboard keys pressed?

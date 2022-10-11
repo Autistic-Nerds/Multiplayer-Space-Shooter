@@ -3,7 +3,7 @@ using System.Net;
 
 namespace CosmosEngine.Netcode
 {
-	internal class NetcodeClient : IEquatable<NetcodeClient>, IEquatable<IPEndPoint>
+	public class NetcodeClient : IEquatable<NetcodeClient>, IEquatable<IPEndPoint>
 	{
 		private IPEndPoint endPoint;
 		internal IPEndPoint EndPoint => endPoint;

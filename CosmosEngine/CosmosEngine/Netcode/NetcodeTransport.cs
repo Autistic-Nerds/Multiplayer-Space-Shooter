@@ -11,8 +11,10 @@ namespace CosmosEngine.Netcode
 	{
 		public const int SIO_UDP_CONNRESET = -1744830452;
 		private event Action<NetcodeMessage, IPEndPoint> onReceiveMessageEvent = delegate { };
+		private event Action onDisconnectedEvent = delegate { };
 
 		private bool connected;
+		private bool server;
 
 		private UdpClient socket;
 		private IPEndPoint endPoint;
@@ -24,6 +26,8 @@ namespace CosmosEngine.Netcode
 		private float packageLoss;
 		private float latency;
 		private Task latencySimulatorTask;
+
+		public Action OnDisconnected { get => onDisconnectedEvent; set => onDisconnectedEvent = value; }
 
 		private class Msg
 		{
@@ -55,6 +59,7 @@ namespace CosmosEngine.Netcode
 			Console.WriteLine($"Server listening on port: {port}");
 			socket = new UdpClient(port);
 			endPoint = new IPEndPoint(IPAddress.Any, port);
+			server = true;
 			Connect();
 		}
 
@@ -81,6 +86,7 @@ namespace CosmosEngine.Netcode
 
 		public void Disconnect()
 		{
+			OnDisconnected.Invoke();
 			connected = false;
 			socket.Close();
 			RemoveAllListeners();

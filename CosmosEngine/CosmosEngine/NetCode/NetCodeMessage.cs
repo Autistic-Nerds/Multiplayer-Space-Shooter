@@ -15,7 +15,6 @@ namespace CosmosEngine.Netcode
 		ACK
 	}
 
-
 	[Serializable]
 	public class NetcodeMessage
 	{
@@ -79,7 +78,7 @@ namespace CosmosEngine.Netcode
 	[Serializable]
 	public class NetcodeAcknowledge : NetcodeData
 	{
-		public uint Key { get; set; }
+		public uint RPI { get; set; }
 		public override NetcodeMessageType Type => NetcodeMessageType.ACK;
 	}
 }

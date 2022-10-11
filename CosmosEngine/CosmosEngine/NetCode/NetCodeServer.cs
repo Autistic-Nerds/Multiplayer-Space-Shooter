@@ -6,6 +6,8 @@ using CosmosEngine;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using System.Threading;
+using CosmosEngine.Modules;
+using CosmosEngine.Collection;
 
 namespace CosmosEngine.Netcode
 {
@@ -13,9 +15,9 @@ namespace CosmosEngine.Netcode
 	{
 		private string ip = "127.0.0.1";
 		private int port = 7000;
-		private float serverTickRate = 5;
+		private float serverTickRate = 10;
 		private readonly List<NetcodeClient> connectedClients = new List<NetcodeClient>();
-		private readonly List<NetcodeIdentity> netcodeBehaviours = new List<NetcodeIdentity>();
+		private readonly Bag<NetcodeIdentity> netcodeObjects = new Bag<NetcodeIdentity>();
 
 		private NetcodeTransport transport;
 		private bool isServerConnection;
@@ -33,6 +35,18 @@ namespace CosmosEngine.Netcode
 		public bool IsServerConnection => isServerConnection;
 		public NetcodeTransport NetcodeTransport => transport ??= new NetcodeTransport();
 
+		public NetcodeServer()
+		{
+			ObjectDelegater.CreateNewDelegation<NetcodeIdentity>(OnNetcodeIdentityInstantiated);
+		}
+
+		private void OnNetcodeIdentityInstantiated(NetcodeIdentity item)
+		{
+			int indentity = netcodeObjects.Count;
+			netcodeObjects[indentity] = item;
+			item.NetId = (uint)indentity;
+		}
+
 		protected override void Update()
 		{
 			if (!NetcodeHandler.IsConnected)
@@ -48,10 +62,11 @@ namespace CosmosEngine.Netcode
 			}
 		}
 
-		private void StartServer()
+		protected void StartServer()
 		{
 			if (!Application.IsRunning)
 				return;
+
 			Debug.Log($"Start Server");
 			transport = new NetcodeTransport();
 			transport.SetupServer(port);
@@ -61,14 +76,15 @@ namespace CosmosEngine.Netcode
 			OnConnected();
 			NetcodeHandler.IsServer = true;
 			NetcodeHandler.IsClient = true;
+			OnStartServer();
 		}
 
-		private void StartClient()
+		protected void StartClient()
 		{
 			if (!Application.IsRunning)
 				return;
-			Debug.Log($"Start Client");
 
+			Debug.Log($"Start Client");
 			if (IPAddress.TryParse(ip, out IPAddress address))
 			{
 				transport = new NetcodeTransport();
@@ -85,15 +101,31 @@ namespace CosmosEngine.Netcode
 			}
 			OnConnected();
 			NetcodeHandler.IsClient = true;
+			OnStartClient();
 		}
 
 		public void SimulateLatency(float latency, float packageLoss) => NetcodeTransport.SimulateLatency(latency, packageLoss);
 
-		public void OnConnected()
+		protected virtual void OnConnected()
 		{
 			transport.AddListener(ReceiveNetcodeMessage);
 			//transport.SimulateLatency(1500, 0.0f);
 			NetcodeHandler.IsConnected = true;
+		}
+
+		protected virtual void OnStartServer()
+		{
+
+		}
+
+		protected virtual void OnStartClient()
+		{
+
+		}
+
+		protected virtual void OnClientConnected(NetcodeClient client)
+		{
+
 		}
 
 		private void StartObjectSerialization()
@@ -256,7 +288,10 @@ namespace CosmosEngine.Netcode
 					if (isServerConnection)
 					{
 						Debug.Log($"Received Client Connect Message from - {endPoint}");
-						connectedClients.Add(new NetcodeClient(endPoint));
+						NetcodeClient client = new NetcodeClient(endPoint);
+						connectedClients.Add(client);
+						OnClientConnected(client);
+
 						transport.SendToClient(new NetcodeMessage()
 						{
 							Data = new ClientConnectData(),
@@ -269,16 +304,25 @@ namespace CosmosEngine.Netcode
 					break;
 				case NetcodeMessageType.RPC:
 					NetcodeRPC rpc = (NetcodeRPC)message.Data;
+					NetcodeAcknowledge ack = new NetcodeAcknowledge()
+					{
+						RPI = rpc.RPI,
+					};
 					if (isServerConnection)
 					{
 						transport.SendToClient(new NetcodeMessage()
 						{
-							Data = new NetcodeAcknowledge()
-							{
-								Key = rpc.RPI,
-							}
+							Data = ack,
 						}, endPoint);
 					}
+					else
+					{
+						transport.SendToServer(new NetcodeMessage()
+						{
+							Data = ack,
+						});
+					}
+
 					lock (m_rpcLock)
 					{
 						remoteProcedureCalls.Add(rpc);
