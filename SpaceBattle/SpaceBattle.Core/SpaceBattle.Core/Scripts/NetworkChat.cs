@@ -131,7 +131,7 @@ namespace SpaceBattle
 			}
 		}
 
-		[ServerRPC]
+		[ServerRPC(ignoreAuthority = true)]
 		private void SendChatMessage(string msg)
 		{
 			RelayChatMessage(msg);
