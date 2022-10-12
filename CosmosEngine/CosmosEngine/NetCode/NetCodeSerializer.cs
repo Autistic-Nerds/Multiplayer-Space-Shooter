@@ -2,48 +2,55 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Text;
 
-namespace CosmosEngine.NetCode
+namespace CosmosEngine.Netcode
 {
-	public static class NetCodeSerializer
+	public static class NetcodeSerializer
 	{
-		public static byte[] Serialize(NetCodeMessage netCodeMessage)
+		#region Messages
+
+		public static byte[] Serialize(NetcodeMessage netcodeMessage)
 		{
-			string serializedMessage = JsonConvert.SerializeObject(netCodeMessage);
+			string serializedMessage = JsonConvert.SerializeObject(netcodeMessage);
 			byte[] jsonData = Encoding.UTF8.GetBytes(serializedMessage);
 			return jsonData;
 		}
 
-		public static NetCodeData Deserialize(byte[] data)
+		public static NetcodeData Deserialize(byte[] data)
 		{
 			string json = Encoding.UTF8.GetString(data);
-			JObject? netCodeMessage = JObject.Parse(json);
+			JObject? netcodeMessage = JObject.Parse(json);
 
-			if (netCodeMessage != null)
+			if (netcodeMessage != null)
 			{
-				JToken netCodeData = netCodeMessage["Data"];
-				if (netCodeData == null)
+				JToken netcodeData = netcodeMessage["Data"];
+				if (netcodeData == null)
 				{
 					Debug.Log($"Recieved a null message", LogFormat.Warning);
 				}
 				else
 				{
-					JToken? netCodeType = netCodeData["Type"];
-					if (netCodeType?.Type is JTokenType.Integer)
+					JToken? netcodeType = netcodeData["Type"];
+					if (netcodeType?.Type is JTokenType.Integer)
 					{
-						NetCodeMessageType type = (NetCodeMessageType)netCodeType.Value<int>();
-						NetCodeData p = type switch
+						NetcodeMessageType type = (NetcodeMessageType)netcodeType.Value<int>();
+						NetcodeData p = type switch
 						{
-							NetCodeMessageType.Empty => default(NetCodeData),
-							NetCodeMessageType.Connect => netCodeData.ToObject<ClientConnectData>(),
-							NetCodeMessageType.Disconnect => netCodeData.ToObject<ClientDisconnectData>(),
-							NetCodeMessageType.Data => netCodeData.ToObject<SerializeNetCodeData>(),
-							_ => default(NetCodeData),
+							NetcodeMessageType.Empty => default(NetcodeData),
+							NetcodeMessageType.Connect => netcodeData.ToObject<ClientConnectData>(),
+							NetcodeMessageType.Disconnect => netcodeData.ToObject<ClientDisconnectData>(),
+							NetcodeMessageType.Data => netcodeData.ToObject<SerializeNetcodeData>(),
+							NetcodeMessageType.RPC => netcodeData.ToObject<NetcodeRPC>(),
+							NetcodeMessageType.RTT => netcodeData.ToObject<RoundtripTime>(),
+							NetcodeMessageType.ACK => netcodeData.ToObject<NetcodeAcknowledge>(),
+							_ => default(NetcodeData),
 						};
 						return p;
 					}
 				}
 			}
-			return default(NetCodeData);
+			return default(NetcodeData);
 		}
+
+		#endregion
 	}
 }

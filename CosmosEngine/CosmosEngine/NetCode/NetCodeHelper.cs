@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
-public static class NetCodeHelper
+namespace CosmosEngine.Netcode
 {
-	public static bool IsSyncVar(this FieldInfo field)
+	public static class NetcodeHelper
 	{
-		object[] fieldMarkers = field.GetCustomAttributes(typeof(SyncVarAttribute), true);
-		return fieldMarkers.Length > 0;
+		public static bool IsSyncVar(this FieldInfo field)
+		{
+			object[] fieldMarkers = field.GetCustomAttributes(typeof(SyncVarAttribute), true);
+			return fieldMarkers.Length > 0;
+		}
 	}
 }

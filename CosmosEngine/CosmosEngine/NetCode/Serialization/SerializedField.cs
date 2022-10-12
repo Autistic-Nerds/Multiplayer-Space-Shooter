@@ -1,18 +1,12 @@
-namespace CosmosEngine.NetCode.Serialization
+namespace CosmosEngine.Netcode.Serialization
 {
 	public struct SerializedField
 	{
 		private string name;
-		private object value;
+		private string value;
 
 		public string Name => name;
-		public object Value => value;
-
-		public SerializedField(string name, object value)
-		{
-			this.name = name;
-			this.value = value;
-		}
+		public string Value => value;
 
 		public SerializedField(string name, string value)
 		{
@@ -22,7 +16,7 @@ namespace CosmosEngine.NetCode.Serialization
 
 		public override string ToString()
 		{
-			return $"{name}:{value} | {value.GetType()}";
+			return $"{name}:{value}";
 		}
 	}
 }

@@ -12,6 +12,11 @@ namespace CosmosEngine
 	{
 		#region Static Colours
 
+		public static Colour Random => new Colour(
+			CosmosEngine.Random.Range(0, 255),
+			CosmosEngine.Random.Range(0, 255),
+			CosmosEngine.Random.Range(0, 255));
+
 		/// <summary>
 		/// White (R: 255, G: 255, B: 255)
 		/// </summary>

@@ -1,21 +1,34 @@
 using CosmosEngine;
-using CosmosEngine.NetCode.Serialization;
+using CosmosEngine.Collection;
+using CosmosEngine.Netcode.Serialization;
+using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Metadata;
 
-namespace CosmosEngine.NetCode
+namespace CosmosEngine.Netcode
 {
-	public class NetCodeIdentity : GameBehaviour
+	public class NetcodeIdentity : GameBehaviour
 	{
-		private readonly Dictionary<uint, NetCodeBehaviour> netCodeBehaviours = new Dictionary<uint, NetCodeBehaviour>();
+		private uint reliableMsgKey;
+
+		private const BindingFlags Flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic;
+		private readonly Dictionary<uint, NetcodeBehaviour> netcodeBehaviours = new Dictionary<uint, NetcodeBehaviour>();
+		private readonly Dictionary<uint, RemoteProcedureCall> remoteProduceCallQueue = new Dictionary<uint, RemoteProcedureCall>();
+		private readonly List<NetcodeRPC> remoteProduceCallAwaiting = new List<NetcodeRPC>();
 
 		private uint netId;
-		private uint netCodeId;
+		private uint netcodeId;
 
 		private bool isServer;
 		private bool isClient;
 		private bool isLocal;
 		private bool hasAuthority;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		public bool IsConnected => NetcodeHandler.IsConnected;
 		/// <summary>
 		/// Returns <see langword="true"/> if this object was instantiated and is controlled by the server.
 		/// </summary>
@@ -71,30 +84,174 @@ namespace CosmosEngine.NetCode
 
 		private void UpdateBehaviourDictionary()
 		{
-			NetCodeBehaviour[] behaviours = GetComponents<NetCodeBehaviour>();
+			NetcodeBehaviour[] behaviours = GetComponents<NetcodeBehaviour>();
 			for(int i = 0; i < behaviours.Length; i++)
 			{
-				NetCodeBehaviour netBehaviour = behaviours[i];
-				if(!netCodeBehaviours.ContainsValue(netBehaviour))
+				NetcodeBehaviour netBehaviour = behaviours[i];
+				if(!netcodeBehaviours.ContainsValue(netBehaviour))
 				{
-					netBehaviour.NetBehaviourIndex = ++netCodeId;
-					netCodeBehaviours.Add(netCodeId, netBehaviour);
+					netBehaviour.NetBehaviourIndex = ++netcodeId;
+					netcodeBehaviours.Add(netcodeId, netBehaviour);
 				}
 			}
 		}
 
-		//Convert object fields to data stream and hand them to NetCodeServer.
-		internal SerializeNetCodeData SerializeFromObject()
+		protected override void LateUpdate()
 		{
-			SerializeNetCodeData serializeData = new SerializeNetCodeData()
+			InvokeRemoteProduceCalls();
+		}
+
+		private void InvokeRemoteProduceCalls()
+		{
+			if(remoteProduceCallQueue.Count > 0)
+			{
+				NetcodeRPC rpc = new NetcodeRPC()
+				{
+					RPI = reliableMsgKey++,
+					NetId = this.NetId,
+				};
+
+				if (reliableMsgKey == uint.MaxValue)
+					reliableMsgKey = 0;
+
+				foreach(RemoteProcedureCall call in remoteProduceCallQueue.Values)
+				{
+					rpc.Add(call);
+				}
+				if(NetcodeHandler.IsServer)
+				{
+					NetcodeServer.Instance.SendToConnectedClients(new NetcodeMessage()
+					{
+						Data = rpc,
+					});
+				}
+				else if(NetcodeHandler.IsClient)
+				{
+					NetcodeServer.Instance.NetcodeTransport.SendToServer(new NetcodeMessage()
+					{
+						Data = rpc,
+					});
+				}
+				remoteProduceCallAwaiting.Add(rpc);
+				remoteProduceCallQueue.Clear();
+			}
+		}
+
+		#region Remote Procedure Call (RPC)
+
+		/// <summary>
+		/// Invokes a remote procedure call on this <see cref="CosmosEngine.Netcode.NetcodeIdentity"/>, a method must be marked for RPC operation.A method must be marked with an appropriate attribute to work as an RPC.
+		/// <list type="bullet">
+		/// <item><see cref="CosmosEngine.Netcode.ClientRPCAttribute"/>: Can only be invoked by clients, this is also true if the client is the host. This method will be executed on the server. For a client to invoke an RPC they must have Authority on the Netcode Object they call it on.</item>
+		/// <item><see cref="CosmosEngine.Netcode.ServerRPCAttribute"/>: Can only be invoked by the server, this is also true if a client is the host. This method will be executed on all clients connected to the server.</item>
+		/// </list>
+		/// <para>It is possible to use RPC for overload methods, but can't differentiate between overload methods with the same number of parameters. Method overloading used for RPC should always have different parameter count.</para>
+		/// </summary>
+		/// <param name="methodName"></param>
+		/// <param name="index"></param>
+		/// <param name="parameters"></param>
+		public void Rpc(string methodName, uint index, params object[] parameters)
+		{
+			if (!NetcodeHandler.IsConnected)
+				return;
+
+			Debug.Log($"RPC: {methodName}");
+
+			NetcodeBehaviour behaviour = netcodeBehaviours[index];
+			System.Type[] parametersType = new System.Type[parameters.Length];
+			for (int i = 0; i < parameters.Length; i++)
+				parametersType[i] = parameters[i].GetType();
+
+			MethodInfo[] methodInfos = behaviour.GetType().GetMethods(Flags);
+			MethodInfo method = null;
+			foreach (MethodInfo info in methodInfos)
+			{
+				if (info.Name.Equals(methodName))
+				{
+					if (info.GetParameters().Length == parameters.Length)
+					{
+						method = info;
+						break;
+					}
+				}
+			}
+
+			if (method == null)
+			{
+				Debug.Log($"No method named {methodName} match parameters {parameters.ParametersTypeToString()} on {GetType().FullName}. RPC was unsuccessful.", LogFormat.Error);
+				return;
+			}
+
+			string[] args = new string[parameters.Length];
+			for(int i = 0; i < parameters.Length; i++)
+			{
+				args[i] = JsonConvert.SerializeObject(parameters[i]);
+			}
+			RemoteProcedureCall rpc = new RemoteProcedureCall()
+			{
+				Method = methodName,
+				RPI = reliableMsgKey++,
+				Index = index,
+				Args = args,
+			};
+
+			if(remoteProduceCallQueue.ContainsKey(index))
+			{
+				remoteProduceCallQueue[index] = rpc;
+			}
+			else
+			{
+				remoteProduceCallQueue.Add(index, rpc);
+			}
+
+			//Does this client have authority? Or should we ignore it?
+			//Does the method has the right Attribute?
+			//Does any method actually exist with these parameters.
+			//If all are true - Add to RpcCallstack
+		}
+
+		internal void ExecuteRpc(RemoteProcedureCall call)
+		{
+			NetcodeBehaviour behaviour = netcodeBehaviours[call.Index];
+			if(behaviour != null)
+			{
+				MethodInfo[] methodOnBehaviour = behaviour.GetType().GetMethods(Flags);
+				foreach(MethodInfo method in methodOnBehaviour)
+				{
+					if(!method.Name.Equals(call.Method))
+						continue;
+
+					ParameterInfo[] methodParameters = method.GetParameters();
+					if (methodParameters.Length != call.Args.Length)
+						continue;
+
+					object[] args = new object[call.Args.Length];
+					for(int i = 0; i < args.Length; i++)
+					{
+						args[i] = JsonConvert.DeserializeObject(call.Args[i], methodParameters[i].ParameterType);
+					}
+					method.Invoke(behaviour, args);
+					break;
+				}
+			}
+		}
+
+		#endregion
+
+		#region Serialize
+
+		//Convert object fields to data stream and hand them to NetcodeServer.
+		internal SerializeNetcodeData? SerializeFromObject()
+		{
+			SerializeNetcodeData serializeData = new SerializeNetcodeData()
 			{
 				NetId = netId,
 			};
-			foreach (NetCodeBehaviour behaviour in netCodeBehaviours.Values)
+			foreach (NetcodeBehaviour behaviour in netcodeBehaviours.Values)
 			{
 				if (!behaviour.Enabled)
 					continue;
-				SerializedObjectData data = behaviour.Serialize();
+				SerializedObjectData data = behaviour.OnSerialize();
 				if (!string.IsNullOrWhiteSpace(data.Stream))
 				{
 					serializeData.Data.Add(data);
@@ -103,15 +260,21 @@ namespace CosmosEngine.NetCode
 			return serializeData;
 		}
 
-		//Recieve data stream from NetCodeServer and update the objects field.
-		internal void DeserializeToObject(SerializeNetCodeData serializeData)
+		#endregion
+
+		#region Deserialize
+
+		//Recieve data stream from NetcodeServer and update the objects field.
+		internal void DeserializeToObject(SerializeNetcodeData serializeData)
 		{
 			foreach (SerializedObjectData data in serializeData.Data)
 			{
 				ObjectStream stream = new ObjectStream();
 				stream.Stream = data.Stream;
-				netCodeBehaviours[data.BehaviourId].Deserialize(stream);
+				netcodeBehaviours[data.BehaviourId].OnDeserialize(stream);
 			}
 		}
+
+		#endregion
 	}
 }
