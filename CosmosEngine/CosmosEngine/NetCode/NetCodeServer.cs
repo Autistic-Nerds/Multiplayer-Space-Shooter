@@ -109,7 +109,7 @@ namespace CosmosEngine.Netcode
 		protected virtual void OnConnected()
 		{
 			transport.AddListener(ReceiveNetcodeMessage);
-			//transport.SimulateLatency(1500, 0.0f);
+			transport.SimulateLatency(1500, 0.0f);
 			NetcodeHandler.IsConnected = true;
 		}
 

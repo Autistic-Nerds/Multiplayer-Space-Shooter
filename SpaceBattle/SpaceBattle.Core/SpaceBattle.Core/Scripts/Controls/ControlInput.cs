@@ -21,7 +21,7 @@ namespace SpaceBattle
                 new InputControl(Keys.Right, Interaction.Hold, Vector2.Right / 2)
             });
             Input.AddInputAction(101, "Player Shoot", started: OnPlayerShoot, null, null, new InputControl(Keys.Space, Interaction.Press));
-            Input.AddInputAction(102, "Spawn Enemy", null, performed: OnEnemySpawn, null, new InputControl(Keys.J, Interaction.Press));
+            //Input.AddInputAction(102, "Spawn Enemy", null, performed: OnEnemySpawn, null, new InputControl(Keys.J, Interaction.Press));
         }
 
         private void OnPlayerMove(CallbackContext context)
@@ -40,13 +40,13 @@ namespace SpaceBattle
             projectileObject.Transform.Rotation = Transform.Rotation;
         }
 
-        private void OnEnemySpawn(CallbackContext context)
-        {
-            GameObject newUnit = new GameObject("EnemyInterceptor");
-            newUnit.AddComponent<Unit>();
-            SpriteRenderer spriteRenderer = newUnit.AddComponent<SpriteRenderer>();
-            spriteRenderer.Sprite = ArtContent.InterceptorEnemy;
-            OnPlayerMove();
-        }
+        //private void OnEnemySpawn(CallbackContext context)
+        //{
+        //    GameObject newUnit = new GameObject("EnemyInterceptor");
+        //    newUnit.AddComponent<Unit>();
+        //    SpriteRenderer spriteRenderer = newUnit.AddComponent<SpriteRenderer>();
+        //    spriteRenderer.Sprite = ArtContent.InterceptorEnemy;
+        //    OnPlayerMove();
+        //}
     }
 }
