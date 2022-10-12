@@ -5,7 +5,7 @@ namespace CosmosEngine
 	/// <summary>
 	/// The RequireComponent attribute automatically adds required components as dependencies.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Class)]
+	[AttributeUsage(AttributeTargets.Class, Inherited = true)]
 	public class RequireComponent : Attribute
 	{
 		private Type[] requiredComponents;
