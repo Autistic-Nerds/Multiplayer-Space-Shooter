@@ -12,6 +12,7 @@ namespace SpaceBattle
     internal class Move : NetcodeBehaviour
     {
         private float speed = 2.7f;
+        private Vector2 position;
         private List<Transform> movement = new List<Transform>();
         protected override void Update()
         {
@@ -23,24 +24,10 @@ namespace SpaceBattle
             if (!IsConnected)
                 return;
 
-            if (InputManager.GetKey(Keys.W))
+            if (InputManager.GetButton("W"))
             {
-
+                position += Vector2.Up;
             }
-        }
-
-        [ClientRPC]
-        private void Movement()
-        {
-            Rpc(nameof(OnPlayerMove));
-            OnPlayerMove();
-        }
-
-        [ServerRPC]
-        private void OnPlayerMove(CallbackContext context)
-        {
-            Vector2 movement = context.ReadValue<Vector2>().Normalized;
-            Transform.Translate(movement * (Unit.Interceptor.Speed * Time.UnscaledDeltaTime), Space.Self);
         }
     }
 }

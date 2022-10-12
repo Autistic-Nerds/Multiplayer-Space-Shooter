@@ -12,12 +12,9 @@ namespace SpaceBattle
 
 		public override void Start()
 		{
-
-
-			//return;
 			GameObject serverObject = new GameObject();
 			NetcodeServer server = serverObject.AddComponent<NetcodeServer>();
-			server.SimulateLatency(100, 0.0f);
+			//server.SimulateLatency(100, 0.0f);
 
 			GameObject obj = new GameObject("Net Object");
 			obj.AddComponent<NetcodeIdentity>();
