@@ -22,6 +22,12 @@ namespace SpaceBattle
 			obj.AddComponent<TestPlayer>();
 			obj.AddComponent<SpriteRenderer>().Sprite = ArtContent.InterceptorEnemy;
 
+			
+			//GameObject playerobj = new GameObject("Player");
+			//playerobj.AddComponent<Unit>();
+			//playerobj.AddComponent<ControlInput>();
+			//playerobj.AddComponent<SpriteRenderer>().Sprite = ArtContent.Interceptor;
+
 			//GameObject go = new GameObject("Chat", typeof(NetworkChat));
 		}
 
