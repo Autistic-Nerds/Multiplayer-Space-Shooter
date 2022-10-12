@@ -4,8 +4,7 @@ using CosmosEngine.Netcode;
 namespace SpaceBattle
 {
 	public class GameManager : CosmosEngine.CoreModule.Game
-	{
-		
+	{		
 		public override void Initialize()
 		{
 			BackgroundColour = Colour.DesaturatedBlue;
