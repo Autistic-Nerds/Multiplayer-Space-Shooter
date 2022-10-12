@@ -14,7 +14,7 @@ namespace CosmosEngine
 	/// </summary>
 	public sealed class GameObject : Behaviour
 	{
-		private List<string> tag;
+		private readonly List<string> tag = new List<string>();
 		private Transform transform;
 		private readonly DirtyList<Component> components = new DirtyList<Component>();
 		private readonly Event<GameObjectChange> gameObjectModifiedEvent = new Event<GameObjectChange>();
