@@ -1,5 +1,11 @@
 ﻿using CosmosEngine;
 using System.Drawing;
+using Newtonsoft.Json;
+using System.IO;
+using System.Net.Http.Json;
+using System.Text;
+using System.Net.Http;
+using System;
 
 namespace SpaceBattle
 {
@@ -73,7 +79,56 @@ namespace SpaceBattle
             if (currentHealth <= 0)
             {
                 currentHealth = 0;
+                DeathCounter();
+                // Call REST web service to post score
             }
+        }
+
+        public async void DeathCounter()
+        {
+            /*
+                
+                GET existing score
+                Increment score
+                Post new score
+            */
+
+            /* Mulig optimering til JSON GET
+             *  using (var client = new HttpClient())
+                {
+                    HttpResponseMessage response = client.GetAsync(builder.Uri).Result;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        UserModel userResult = response.Content.ReadAsAsync<UserModel>().Result;                               
+                    }
+                }
+             */
+
+
+            //GET START
+            HttpClient client = new HttpClient();
+            string url = "https://localhost:5001/api/score";
+
+            // HttpResponseMessage response = client.GetAsync(builder.Uri).Result;
+            HttpResponseMessage getResponse = await client.GetAsync(url); // Get command to http
+
+            //string responeBody = await getResponse.Content.ReadAsStringAsync(); // response body as string
+
+            //Score tempScore = getResponse.Content.ReadAsAsync<Score>();
+            var responseJson = await getResponse.Content.ReadFromJsonAsync<Score[]>(); // Submitted name and score
+
+            // GET END
+            int tempScore = (Int32)responseJson[0].ScoreNumber; //Current score value / Skal laves til at hente spiller ID
+            tempScore ++; //Increment DeathCounter by 1
+            // POST START
+            var score = new Score()
+            {
+                Name = "",
+                ScoreNumber = tempScore,
+            };
+
+            var data = new StringContent(JsonConvert.SerializeObject(score), Encoding.UTF8, "application/json");
+            var postResponse = await client.PostAsync(url, data); //POST CALL
         }
 
         public static Unit Interceptor
