@@ -1,4 +1,4 @@
-﻿namespace CosmosEngine.NetCode.Serialization
+﻿namespace CosmosEngine.Netcode.Serialization
 {
 	[System.Serializable]
 	public struct SerializedObjectData

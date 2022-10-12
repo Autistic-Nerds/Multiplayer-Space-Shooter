@@ -1,47 +1,84 @@
-using CosmosEngine.NetCode.Serialization;
+using CosmosEngine.Netcode.Serialization;
 using System;
 using System.Collections.Generic;
 
-namespace CosmosEngine.NetCode
+namespace CosmosEngine.Netcode
 {
-	public enum NetCodeMessageType
+	public enum NetcodeMessageType
 	{
 		Empty,
 		Connect,
 		Disconnect,
 		Data,
-	}
-
-
-	[Serializable]
-	public class NetCodeMessage
-	{
-		public NetCodeData Data { get; set; } 
+		RPC,
+		RTT,
+		ACK
 	}
 
 	[Serializable]
-	public abstract class NetCodeData
+	public class NetcodeMessage
 	{
-		public abstract NetCodeMessageType Type { get; }
+		public NetcodeData Data { get; set; } 
 	}
 
 	[Serializable]
-	public class ClientConnectData : NetCodeData
+	public abstract class NetcodeData
 	{
-		public override NetCodeMessageType Type => NetCodeMessageType.Connect;
+		public abstract NetcodeMessageType Type { get; }
 	}
 
 	[Serializable]
-	public class ClientDisconnectData : NetCodeData
+	public class ClientConnectData : NetcodeData
 	{
-		public override NetCodeMessageType Type => NetCodeMessageType.Disconnect;
+		public override NetcodeMessageType Type => NetcodeMessageType.Connect;
+	}
+
+	[Serializable]
+	public class ClientDisconnectData : NetcodeData
+	{
+		public override NetcodeMessageType Type => NetcodeMessageType.Disconnect;
 	}
 	
 	[Serializable]
-	public class SerializeNetCodeData : NetCodeData
+	public class SerializeNetcodeData : NetcodeData
 	{
 		public uint NetId { get; set; }
 		public List<SerializedObjectData> Data { get; set; } = new List<SerializedObjectData>();
-		public override NetCodeMessageType Type => NetCodeMessageType.Data;
+		public override NetcodeMessageType Type => NetcodeMessageType.Data;
+	}
+
+	[Serializable]
+	public class NetcodeRPC : NetcodeData, IEquatable<NetcodeRPC>
+	{
+		/// <summary>
+		/// Reliable package index.
+		/// </summary>
+		public uint RPI { get; set; }
+		public uint NetId { get; set; }
+		public List<RemoteProcedureCall> Call { get; set; } = new List<RemoteProcedureCall>();
+		public override NetcodeMessageType Type => NetcodeMessageType.RPC;
+		public void Add(RemoteProcedureCall rpc) => Call.Add(rpc);
+
+		public bool Equals(NetcodeRPC other)
+		{
+			if(NetId == other.NetId)
+			{
+				return true;
+			}
+			return false;
+		}
+	}
+
+	[Serializable]
+	public class RoundtripTime : NetcodeData
+	{
+		public override NetcodeMessageType Type => NetcodeMessageType.RTT;
+	}
+
+	[Serializable]
+	public class NetcodeAcknowledge : NetcodeData
+	{
+		public uint RPI { get; set; }
+		public override NetcodeMessageType Type => NetcodeMessageType.ACK;
 	}
 }

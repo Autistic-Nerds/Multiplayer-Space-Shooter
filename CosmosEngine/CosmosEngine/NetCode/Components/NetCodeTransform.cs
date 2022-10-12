@@ -1,8 +1,8 @@
 using CosmosEngine;
 
-namespace CosmosEngine.NetCode
+namespace CosmosEngine.Netcode
 {
-	public class NetCodeTransform : NetCodeBehaviour
+	public class NetcodeTransform : NetcodeBehaviour
 	{
 		[SyncVar(hook = nameof(UpdatePosition))] private Vector2 position;
 		[SyncVar(hook = nameof(UpdateRotation))] private float rotation;
@@ -12,7 +12,7 @@ namespace CosmosEngine.NetCode
 
 		protected override void Update()
 		{
-			if (FindObjectOfType<NetCodeServer>().IsServerConnection)
+			if (FindObjectOfType<NetcodeServer>().IsServerConnection)
 			{
 				position = Transform.Position;
 				rotation = Transform.Rotation;

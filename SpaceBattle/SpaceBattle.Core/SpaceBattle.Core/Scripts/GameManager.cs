@@ -1,11 +1,10 @@
 ﻿using CosmosEngine;
-using CosmosEngine.NetCode;
+using CosmosEngine.Netcode;
 
 namespace SpaceBattle
 {
 	public class GameManager : CosmosEngine.CoreModule.Game
-	{
-		
+	{		
 		public override void Initialize()
 		{
 			BackgroundColour = Colour.DesaturatedBlue;
@@ -13,21 +12,26 @@ namespace SpaceBattle
 
 		public override void Start()
 		{
+			GameObject go = new GameObject("Solider");
+			go.AddComponent<Solider>();
+			go.AddComponent<SpriteRenderer>().Sprite = ArtContent.InterceptorPlayer;
+
+			Solider solider = go.GetComponent<Solider>();
+			solider.Initialize(50);
+
+
+			return;
 			GameObject serverObject = new GameObject();
-			NetCodeServer server = serverObject.AddComponent<NetCodeServer>();
+			NetcodeServer server = serverObject.AddComponent<NetcodeServer>();
+			server.SimulateLatency(100, 0.0f);
 
-			GameObject gameObject = new GameObject();
-			SpriteRenderer spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-			gameObject.AddComponent<Unit>("Interceptor", "Fast and agile unit with low firepower but great evasive abilities.");
-			gameObject.AddComponent<NetCodeTransform>();
-			spriteRenderer.Sprite = ArtContent.InterceptorPlayer;
-			gameObject.AddComponent<ControlInput>();
+			GameObject obj = new GameObject("Net Object");
+			obj.AddComponent<NetcodeIdentity>();
+			obj.AddComponent<NetcodeTransform>();
+			obj.AddComponent<Shooter>();
+			obj.AddComponent<SpriteRenderer>().Sprite = ArtContent.InterceptorEnemy;
 
-			//GameObject obj = new GameObject("Mover");
-			//obj.AddComponent<NetCodeIdentity>();
-			//obj.AddComponent<NetCodeTransform>();
-			//obj.AddComponent<NetworkMover>();
-			//obj.AddComponent<SpriteRenderer>().Sprite = ArtContent.InterceptorEnemy;
+			//GameObject go = new GameObject("Chat", typeof(NetworkChat));
 		}
 
 		public override void Update()

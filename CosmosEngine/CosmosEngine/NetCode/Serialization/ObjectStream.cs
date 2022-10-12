@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
-namespace CosmosEngine.NetCode.Serialization
+namespace CosmosEngine.Netcode.Serialization
 {
 	internal class ObjectStream
 	{
