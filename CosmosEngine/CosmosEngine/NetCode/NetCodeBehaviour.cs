@@ -1,6 +1,8 @@
 using CosmosEngine;
 using CosmosEngine.Netcode.Serialization;
 using Newtonsoft.Json;
+using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -50,8 +52,9 @@ namespace CosmosEngine.Netcode
 
 		internal uint NetBehaviourIndex { get => behaviourIndex; set => behaviourIndex = value; }
 
-		protected override void Awake()
+		protected override void OnInstantiated()
 		{
+			base.OnInstantiated();
 			InitialSyncFields();
 		}
 
@@ -72,15 +75,15 @@ namespace CosmosEngine.Netcode
 			}
 		}
 
-		public void Rpc(string methodName, params object[] parameters)
-		{
-			if(NetIdentity == null)
-			{
-				Debug.Log($"Attempting to send RPC without an NetcodeIdentity", LogFormat.Warning);
-				return;
-			}
-			NetIdentity.Rpc(methodName, NetBehaviourIndex, parameters);
-		}
+		//public void Rpc(string methodName, params object[] parameters)
+		//{
+		//	if(NetIdentity == null)
+		//	{
+		//		Debug.Log($"Attempting to send RPC without an NetcodeIdentity", LogFormat.Warning);
+		//		return;
+		//	}
+		//	NetIdentity.Rpc(methodName, NetBehaviourIndex, parameters);
+		//}
 
 		public void Rpc(string methodName, NetcodeClient? target, params object[] parameters)
 		{
@@ -174,10 +177,18 @@ namespace CosmosEngine.Netcode
 			NetcodeWriter stream = new NetcodeWriter();
 			stream.Open();
 
-			SerializeSyncVars(ref stream);
-			Serialize(ref stream);
+			if (HasAuthority)
+			{
+				SerializeSyncVars(ref stream);
+				Serialize(ref stream);
+			}
 
 			stream.Close();
+			return new SerializedObjectData()
+			{
+				Stream = stream.Export(),
+				BehaviourId = behaviourIndex,
+			};
 
 			//SerializedObjectData serializedData = new SerializedObjectData()
 			//{
@@ -190,7 +201,22 @@ namespace CosmosEngine.Netcode
 
 		private void SerializeSyncVars(ref NetcodeWriter stream)
 		{
-
+			int index = 0;
+			bool dirtyData = false;
+			foreach (FieldInfo field in syncVarFields.Values)
+			{
+				object value = field.GetValue(this);
+				SyncVarAttribute syncVarAttribute = field.GetCustomAttribute<SyncVarAttribute>();
+				if (!value.Equals(syncVarDirtyBits[index]) || syncVarAttribute.ForceSync)
+				{
+					stream.WriteSyncVar(field.Name, value);
+					syncVarDirtyBits[index] = value;
+					dirtyData = true;
+				}
+				index++;
+			}
+			if (dirtyData)
+				stream.FinializeSyncVar();
 		}
 
 		public virtual void Serialize(ref NetcodeWriter stream)
@@ -204,13 +230,40 @@ namespace CosmosEngine.Netcode
 
 		internal void DeserializeObject(NetcodeReader stream)
 		{
-			DeserializeSyncVars(ref stream);
-			Deserialize(ref stream);
+			if (!HasAuthority)
+			{
+				DeserializeSyncVars(ref stream);
+				Deserialize(ref stream);
+			}
 		}
 
 		private void DeserializeSyncVars(ref NetcodeReader stream)
 		{
+			foreach (SerializedField data in stream.ReadSyncVars())
+			{
+				//Debug.Log($"DESERIALIZE DATA: {data.Name} - VALUE: {data.Value}");
+				//continue;
+				FieldInfo field = syncVarFields[data.Name];
+				object value = JsonConvert.DeserializeObject(data.Value, field.FieldType);
 
+				if (value != null)
+				{
+					field.SetValue(this, value);
+					SyncVarAttribute syncVarAttribute = field.GetCustomAttribute<SyncVarAttribute>();
+					if (!string.IsNullOrWhiteSpace(syncVarAttribute.hook))
+					{
+						MethodInfo methodHook = GetType().GetMethod(syncVarAttribute.hook, Flags);
+						if (methodHook != null)
+						{
+							methodHook.Invoke(this, null);
+						}
+						else
+						{
+							Debug.Log($"Hook ({syncVarAttribute.hook}) attached to SyncVar '{field.Name}' - but no such method exist on {GetType().Name}", LogFormat.Warning);
+						}
+					}
+				}
+			}
 		}
 
 		public virtual void Deserialize(ref NetcodeReader stream)

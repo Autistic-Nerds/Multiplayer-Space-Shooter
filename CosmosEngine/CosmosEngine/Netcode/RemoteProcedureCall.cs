@@ -22,7 +22,6 @@ namespace CosmosEngine.Netcode
 		public uint Index { get; set; }
 		public uint RPI { get; set; }
 		public string[] Args { get; set; }
-
 		[JsonIgnore]
 		public NetcodeClient Target { get; set; }
 

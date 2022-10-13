@@ -51,12 +51,17 @@ namespace CosmosEngine.Netcode.Serialization
 
 		public object? ReadSyncVar(string name, System.Type type)
 		{
-			if (index < streamData.Count)
+			int index = syncVarData.FindIndex(item => item.Name.Equals(name));
+			if (index >= 0)
 			{
-				string next = streamData[index++];
-				return JsonConvert.DeserializeObject(next, type);
+				return JsonConvert.DeserializeObject(syncVarData[index].Value, type);
 			}
 			return null;
+		}
+
+		public IEnumerable<SerializedField> ReadSyncVars()
+		{
+			return syncVarData;
 		}
 
 		private void SplitDataStream()

@@ -5,6 +5,7 @@ using System.Text;
 
 namespace CosmosEngine.Netcode.Serialization
 {
+	[System.Obsolete("Have been replaced by NetcodeWriter and NetcodeReader",false)]
 	internal class ObjectStream
 	{
 		private StringBuilder stringBuilder;

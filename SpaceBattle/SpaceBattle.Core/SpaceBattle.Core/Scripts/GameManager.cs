@@ -23,15 +23,8 @@ namespace SpaceBattle
 			//Debug.Log(s);
 
 			GameObject serverObject = new GameObject();
-			NetcodeServer server = serverObject.AddComponent<NetcodeServer>();
-			server.SimulateLatency(100, 0.0f);
-
-			GameObject obj = new GameObject("Net Object");
-			obj.AddComponent<NetcodeIdentity>();
-			obj.AddComponent<NetcodeTransform>();
-			obj.AddComponent<Shooter>();
-			obj.AddComponent<SpriteRenderer>().Sprite = ArtContent.InterceptorEnemy;
-
+			NetcodeServer server = serverObject.AddComponent<NetworkServerManager>();
+			server.SimulateLatency(150, 0.0f);
 			GameObject go = new GameObject("Chat", typeof(NetcodeIdentity), typeof(NetworkChat));
 		}
 

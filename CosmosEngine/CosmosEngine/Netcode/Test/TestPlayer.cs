@@ -33,7 +33,7 @@ namespace CosmosEngine.Netcode
 						Vector2 pos = Camera.Main.ScreenToWorld(InputManager.MousePosition);
 						elapsed = Time.ElapsedTime - elapsed;
 						//Rpc(nameof(TestMethodServerRpc), pos, elapsed);
-						Rpc(nameof(Shoot), pos);
+						Rpc(nameof(Shoot), null, pos);
 					}
 				}
 			}
@@ -50,7 +50,7 @@ namespace CosmosEngine.Netcode
 		{
 			Colour rndColour = Colour.Random;
 			PlaceObject(pos, rndColour);
-			Rpc(nameof(PlaceObject), pos, rndColour);
+			Rpc(nameof(PlaceObject), null, pos, rndColour);
 		}
 
 		[ServerRPC]

@@ -10,7 +10,7 @@ namespace CosmosEngine.Netcode.Serialization
 
 		public SerializedField(string name, string value)
 		{
-			this.name = name;
+			this.name = name.Trim('"');
 			this.value = value;
 		}
 

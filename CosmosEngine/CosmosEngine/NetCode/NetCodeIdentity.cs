@@ -46,13 +46,13 @@ namespace CosmosEngine.Netcode
 		/// <para>Authority determines who syncs the data from this object to the server. For most objects this should be held by the server.</para> 
 		/// <para>Authority can be transferred using <see cref="TransferAuthority"/>. Data can still be written from the local client to the network session using other means.</para>
 		/// </summary>
-		public bool HasAuthority { get => hasAuthority; internal set => hasAuthority = value; }
+		public bool HasAuthority { get => hasAuthority; set => hasAuthority = value; }
 
 		/// <summary>
 		/// The unique network Id of this object.
 		/// <para>This is assigned at runtime by the network server and will be unique for all objects for that network session.</para>
 		/// </summary>
-		public uint NetId { get => netId; internal set => netId = value; }
+		public uint NetId { get => netId; set => netId = value; }
 
 		protected override void Awake()
 		{
@@ -105,34 +105,44 @@ namespace CosmosEngine.Netcode
 		{
 			if(remoteProduceCallQueue.Count > 0)
 			{
-				NetcodeRPC rpc = new NetcodeRPC()
-				{
-					RPI = reliableMsgKey++,
-					NetId = this.NetId,
-				};
-
-				if (reliableMsgKey == uint.MaxValue)
-					reliableMsgKey = 0;
-
 				foreach(RemoteProcedureCall call in remoteProduceCallQueue.Values)
 				{
-					rpc.Add(call);
-				}
-				if(NetcodeHandler.IsServer)
-				{
-					NetcodeServer.Instance.SendToConnectedClients(new NetcodeMessage()
+					NetcodeRPC rpc = new NetcodeRPC()
 					{
-						Data = rpc,
-					});
-				}
-				else if(NetcodeHandler.IsClient)
-				{
-					NetcodeServer.Instance.NetcodeTransport.SendToServer(new NetcodeMessage()
+						RPI = reliableMsgKey++,
+						Call = call,
+						NetId = this.NetId,
+					};
+					if (reliableMsgKey == uint.MaxValue)
+						reliableMsgKey = 0;
+
+					if (call.Target != null)
 					{
-						Data = rpc,
-					});
+						NetcodeServer.Instance.NetcodeTransport.SendToClient(new NetcodeMessage()
+						{
+							Data = rpc,
+						}, call.Target);
+					}
+					else
+					{
+						if (NetcodeHandler.IsServer)
+						{
+							NetcodeServer.Instance.SendToConnectedClients(new NetcodeMessage()
+							{
+								Data = rpc,
+							});
+						}
+						else if (NetcodeHandler.IsClient)
+						{
+							NetcodeServer.Instance.NetcodeTransport.SendToServer(new NetcodeMessage()
+							{
+								Data = rpc,
+							});
+						}
+					}
+
+					remoteProduceCallAwaiting.Add(rpc);
 				}
-				remoteProduceCallAwaiting.Add(rpc);
 				remoteProduceCallQueue.Clear();
 			}
 		}
@@ -150,13 +160,14 @@ namespace CosmosEngine.Netcode
 		/// <param name="methodName"></param>
 		/// <param name="index"></param>
 		/// <param name="parameters"></param>
-		public void Rpc(string methodName, uint index, params object[] parameters) => Rpc(methodName, index, parameters);
+		//public void Rpc(string methodName, uint index, params object[] parameters) => Rpc(methodName, index, null, parameters);
 
 		/// <summary>
 		/// <inheritdoc cref="Rpc(string, uint, object[])"/>
 		/// </summary>
 		/// <param name="methodName"></param>
-		/// <param name="index"></param>
+		/// <param name="index"></param>>	CosmosEngine.dll!CosmosEngine.Netcode.NetcodeIdentity.Rpc(string methodName, uint index, object[] parameters) Line 162	C#
+
 		/// <param name="target"></param>
 		/// <param name="parameters"></param>
 		public void Rpc(string methodName, uint index, NetcodeClient? target, params object[] parameters)
@@ -223,8 +234,10 @@ namespace CosmosEngine.Netcode
 
 		internal void ExecuteRpc(RemoteProcedureCall call)
 		{
+			UpdateBehaviourDictionary();
 			NetcodeBehaviour behaviour = netcodeBehaviours[call.Index];
-			if(behaviour != null)
+			Debug.Log($"Executing RPC: {call.Method} on {(behaviour == null ? "null" : behaviour.GetType().Name)}");
+			if (behaviour != null)
 			{
 				MethodInfo[] methodOnBehaviour = behaviour.GetType().GetMethods(Flags);
 				foreach(MethodInfo method in methodOnBehaviour)
@@ -262,8 +275,9 @@ namespace CosmosEngine.Netcode
 			{
 				if (!behaviour.Enabled)
 					continue;
-				SerializedObjectData data = behaviour.OnSerialize();
-				if (!string.IsNullOrWhiteSpace(data.Stream))
+
+				SerializedObjectData data = behaviour.SerializeObject();
+				if (!string.IsNullOrWhiteSpace(data.Stream) || data.Stream.Equals("||"))
 				{
 					serializeData.Data.Add(data);
 				}
@@ -278,11 +292,16 @@ namespace CosmosEngine.Netcode
 		//Recieve data stream from NetcodeServer and update the objects field.
 		internal void DeserializeToObject(SerializeNetcodeData serializeData)
 		{
+			//If I have authority and is serializing to the object, I shouldn't care because my data is already correct.
+			if (HasAuthority)
+				return;
+
 			foreach (SerializedObjectData data in serializeData.Data)
 			{
-				ObjectStream stream = new ObjectStream();
-				stream.Stream = data.Stream;
-				netcodeBehaviours[data.BehaviourId].OnDeserialize(stream);
+				NetcodeReader stream = new NetcodeReader(data.Stream);
+				stream.Open();
+				netcodeBehaviours[data.BehaviourId].DeserializeObject(stream);
+				stream.Close();
 			}
 		}
 

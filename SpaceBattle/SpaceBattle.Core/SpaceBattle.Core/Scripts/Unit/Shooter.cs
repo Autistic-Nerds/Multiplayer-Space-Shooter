@@ -24,7 +24,7 @@ namespace SpaceBattle
 			{
 				if(cd < Time.ElapsedTime)
 				{
-					Rpc(nameof(Shoot));
+					Rpc(nameof(Shoot), null);
 					cd = Time.ElapsedTime + 0.2f;
 				}
 			}
@@ -33,7 +33,7 @@ namespace SpaceBattle
 		[ClientRPC]
 		private void Shoot()
 		{
-			Rpc(nameof(SpawnProjectile));
+			Rpc(nameof(SpawnProjectile), null);
 			SpawnProjectile();
 		}
 

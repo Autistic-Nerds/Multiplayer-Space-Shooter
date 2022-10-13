@@ -91,7 +91,7 @@ namespace SpaceBattle
 						}
 						else
 						{ 
-							Rpc(nameof(SendChatMessage), chatMsg);
+							Rpc(nameof(SendChatMessage), null, chatMsg);
 						}
 						keyboard.Clear();
 						chatMsg = "";
@@ -135,7 +135,7 @@ namespace SpaceBattle
 		private void SendChatMessage(string msg)
 		{
 			RelayChatMessage(msg);
-			Rpc(nameof(RelayChatMessage), msg);
+			Rpc(nameof(RelayChatMessage), null, msg);
 		}
 
 		[ClientRPC]

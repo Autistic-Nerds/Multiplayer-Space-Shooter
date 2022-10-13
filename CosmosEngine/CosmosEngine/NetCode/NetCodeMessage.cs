@@ -55,9 +55,8 @@ namespace CosmosEngine.Netcode
 		/// </summary>
 		public uint RPI { get; set; }
 		public uint NetId { get; set; }
-		public List<RemoteProcedureCall> Call { get; set; } = new List<RemoteProcedureCall>();
+		public RemoteProcedureCall Call { get; set; }
 		public override NetcodeMessageType Type => NetcodeMessageType.RPC;
-		public void Add(RemoteProcedureCall rpc) => Call.Add(rpc);
 
 		public bool Equals(NetcodeRPC other)
 		{

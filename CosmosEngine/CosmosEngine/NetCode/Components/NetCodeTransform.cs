@@ -1,38 +1,41 @@
 using CosmosEngine;
+using CosmosEngine.Netcode.Serialization;
 
 namespace CosmosEngine.Netcode
 {
 	public class NetcodeTransform : NetcodeBehaviour
 	{
-		[SyncVar(hook = nameof(UpdatePosition))] private Vector2 position;
-		[SyncVar(hook = nameof(UpdateRotation))] private float rotation;
+		[SyncVar] private Vector2 onlinePosition;
+		[SyncVar] private float onlineRotation;
 
 		private Vector2 desiredPosition;
 		private float desiredRotation;
 
 		protected override void Update()
 		{
-			if (FindObjectOfType<NetcodeServer>().IsServerConnection)
+			if(!HasAuthority)
 			{
-				position = Transform.Position;
-				rotation = Transform.Rotation;
+				float dist = Vector2.Distance(Transform.Position, onlinePosition);
+				Transform.Position = Vector2.MoveTowards(Transform.Position, onlinePosition, 10f * dist * Time.DeltaTime);
+				Transform.Rotation = Mathf.MoveTowardsAngle(Transform.Rotation, onlineRotation, 360f * Time.DeltaTime);
 			}
 			else
 			{
-				float dist = Vector2.Distance(Transform.Position, desiredPosition);
-				Transform.Position = Vector2.MoveTowards(Transform.Position, desiredPosition, 3f * dist * Time.DeltaTime);
-				Transform.Rotation = Mathf.MoveTowardsAngle(Transform.Rotation, desiredRotation, 360f * Time.DeltaTime);
+				onlinePosition = Transform.Position;
+				onlineRotation = Transform.Rotation;
 			}
 		}
 
 		private void UpdatePosition()
 		{
-			desiredPosition = position;
+			Debug.Log("Update Position");
+			desiredPosition = onlinePosition;
 		}
 
 		private void UpdateRotation()
 		{
-			desiredRotation = rotation;
+			Debug.Log("Update Rotation");
+			desiredRotation = onlineRotation;
 		}
 	}
 }

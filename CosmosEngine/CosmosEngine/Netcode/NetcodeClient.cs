@@ -15,6 +15,7 @@ namespace CosmosEngine.Netcode
 
 		public bool Equals(IPEndPoint other) => EndPoint.Equals(other);
 		public bool Equals(NetcodeClient other) => EndPoint.Equals(other.EndPoint);
+		public override string ToString() => EndPoint.ToString();
 
 		public static implicit operator IPEndPoint(NetcodeClient client) => client.EndPoint;
 	}
