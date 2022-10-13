@@ -15,6 +15,11 @@ namespace SpaceBattle
 			spawner = go.AddComponent<NetworkSpawner>();
 		}
 
+		protected override void OnStartServer()
+		{
+			spawner.CreateServerPlayer();
+		}
+
 		protected override void OnClientConnected(NetcodeClient client)
 		{
 			base.OnClientConnected(client);

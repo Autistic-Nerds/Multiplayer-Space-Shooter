@@ -221,15 +221,7 @@ namespace CosmosEngine.Netcode
 				Target = target,
 			};
 
-			if (remoteProduceCallQueue.ContainsKey(index))
-			{
-				remoteProduceCallQueue[index] = rpc;
-			}
-			else
-			{
-				remoteProduceCallQueue.Add(index, rpc);
-			}
-
+			remoteProduceCallQueue.Add(reliableMsgKey, rpc);
 		}
 
 		internal void ExecuteRpc(RemoteProcedureCall call)

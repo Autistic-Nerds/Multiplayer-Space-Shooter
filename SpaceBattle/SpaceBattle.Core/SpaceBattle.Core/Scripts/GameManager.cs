@@ -24,7 +24,7 @@ namespace SpaceBattle
 
 			GameObject serverObject = new GameObject();
 			NetcodeServer server = serverObject.AddComponent<NetworkServerManager>();
-			server.SimulateLatency(150, 0.0f);
+			server.SimulateLatency(1590, 0.0f);
 			GameObject go = new GameObject("Chat", typeof(NetcodeIdentity), typeof(NetworkChat));
 		}
 

@@ -23,8 +23,6 @@ namespace SpaceBattle
 			Debug.Log($"Create new player for {(newClient == null ? "null" : newClient)}");
 			if (newClient != null)
 			{
-				//Spawn a version of the new player ship on the server.
-				SpawnNewPlayer(assignedId, false, position);
 
 				//Spawn a player ship on the new client for each player ship already on the server.
 				foreach (NetcodeIdentity netObject in netcodeObjects)
@@ -40,12 +38,26 @@ namespace SpaceBattle
 				{
 					Rpc(nameof(SpawnNewPlayer), client, assignedId, false, position);
 				}
+
+				//Spawn a version of the new player ship on the server.
+				SpawnNewPlayer(assignedId, false, position);
 			}
+		}
+
+		protected override void Update()
+		{
+			base.Update();
+			Debug.LogTable(netcodeObjects);
+		}
+
+		public void CreateServerPlayer()
+		{
+			SpawnNewPlayer(netId++, true, Vector2.Zero);
 		}
 
 		private void SpawnNewPlayer(uint netId, bool isMine, Vector2 position)
 		{
-			Debug.Log($"Spawn Command: {netId} - {isMine} {position}");
+			Debug.Log($"Spawn Command: {netId} - {isMine} {position}", LogFormat.Message, LogOption.None);
 			GameObject go = new GameObject("Player");
 			NetcodeIdentity net = go.AddComponent<NetcodeIdentity>();
 			go.AddComponent<NetcodeTransform>();
