@@ -82,7 +82,17 @@ namespace CosmosEngine.Netcode
 			NetIdentity.Rpc(methodName, NetBehaviourIndex, parameters);
 		}
 
-		internal void RecieveRpc(RemoteProcedureCall call)
+		public void Rpc(string methodName, NetcodeClient? target, params object[] parameters)
+		{
+			if (NetIdentity == null)
+			{
+				Debug.Log($"Attempting to send RPC without an NetcodeIdentity", LogFormat.Warning);
+				return;
+			}
+			NetIdentity.Rpc(methodName, NetBehaviourIndex, target, parameters);
+		}
+
+		internal void ExecuteRpc(RemoteProcedureCall call)
 		{
 			//MethodInfo method = GetType().GetMethod(call.Method, Flags);
 			//method.Invoke(method, null);

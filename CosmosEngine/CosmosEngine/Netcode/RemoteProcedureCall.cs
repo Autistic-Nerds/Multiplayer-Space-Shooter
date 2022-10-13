@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace CosmosEngine.Netcode
 {
@@ -16,10 +17,14 @@ namespace CosmosEngine.Netcode
 		//When receiver gets the message.
 		//Send an acknowledge message to sender, confirming that the RPC was recieved.
 		//Remove the RPC from the call queue.
+
 		public string Method { get; set; }
 		public uint Index { get; set; }
 		public uint RPI { get; set; }
 		public string[] Args { get; set; }
+
+		[JsonIgnore]
+		public NetcodeClient Target { get; set; }
 
 		public int CompareTo(RemoteProcedureCall other)
 		{

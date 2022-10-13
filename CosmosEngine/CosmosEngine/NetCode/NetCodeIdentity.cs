@@ -150,8 +150,22 @@ namespace CosmosEngine.Netcode
 		/// <param name="methodName"></param>
 		/// <param name="index"></param>
 		/// <param name="parameters"></param>
-		public void Rpc(string methodName, uint index, params object[] parameters)
+		public void Rpc(string methodName, uint index, params object[] parameters) => Rpc(methodName, index, parameters);
+
+		/// <summary>
+		/// <inheritdoc cref="Rpc(string, uint, object[])"/>
+		/// </summary>
+		/// <param name="methodName"></param>
+		/// <param name="index"></param>
+		/// <param name="target"></param>
+		/// <param name="parameters"></param>
+		public void Rpc(string methodName, uint index, NetcodeClient? target, params object[] parameters)
 		{
+			//Does this client have authority? Or should we ignore it?
+			//Does the method has the right Attribute?
+			//Does any method actually exist with these parameters.
+			//If all are true - Add to RpcCallstack
+
 			if (!NetcodeHandler.IsConnected)
 				return;
 
@@ -183,7 +197,7 @@ namespace CosmosEngine.Netcode
 			}
 
 			string[] args = new string[parameters.Length];
-			for(int i = 0; i < parameters.Length; i++)
+			for (int i = 0; i < parameters.Length; i++)
 			{
 				args[i] = JsonConvert.SerializeObject(parameters[i]);
 			}
@@ -193,9 +207,10 @@ namespace CosmosEngine.Netcode
 				RPI = reliableMsgKey++,
 				Index = index,
 				Args = args,
+				Target = target,
 			};
 
-			if(remoteProduceCallQueue.ContainsKey(index))
+			if (remoteProduceCallQueue.ContainsKey(index))
 			{
 				remoteProduceCallQueue[index] = rpc;
 			}
@@ -204,10 +219,6 @@ namespace CosmosEngine.Netcode
 				remoteProduceCallQueue.Add(index, rpc);
 			}
 
-			//Does this client have authority? Or should we ignore it?
-			//Does the method has the right Attribute?
-			//Does any method actually exist with these parameters.
-			//If all are true - Add to RpcCallstack
 		}
 
 		internal void ExecuteRpc(RemoteProcedureCall call)
