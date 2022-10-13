@@ -28,22 +28,22 @@ namespace CosmosEngine.Netcode.Serialization
 				return new List<SerializedField>();
 
 			List<SerializedField> stream = new List<SerializedField>();
-			string[] streamData = objectStream.Split("|");
-			foreach(string open in streamData)
-			{
-				string[] field = open.Split(':');
-				if (field.Length < 2)
-					continue;
+			//string[] streamData = objectStream.Split("|");
+			//foreach(string open in streamData)
+			//{
+			//	string[] field = open.Split(':');
+			//	if (field.Length < 2)
+			//		continue;
 				
-				string name = field[0];
-				StringBuilder sb = new StringBuilder();
-				for(int i = 1; i < field.Length; i++)
-					sb.Append(field[i] + (i < field.Length - 1 ? ":" : ""));
+			//	string name = field[0];
+			//	StringBuilder sb = new StringBuilder();
+			//	for(int i = 1; i < field.Length; i++)
+			//		sb.Append(field[i] + (i < field.Length - 1 ? ":" : ""));
 
-				string value = sb.ToString();
-				SerializedField serialization = new SerializedField(name, value);
-				stream.Add(serialization);
-			}
+			//	string value = sb.ToString();
+			//	SerializedField serialization = new SerializedField(name, value);
+			//	stream.Add(serialization);
+			//}
 			return stream;
 		}
 

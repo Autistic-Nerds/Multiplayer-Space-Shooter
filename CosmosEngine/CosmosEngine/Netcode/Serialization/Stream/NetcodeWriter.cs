@@ -33,6 +33,11 @@ namespace CosmosEngine.Netcode.Serialization
 			WriteData($"{Serialize(name)}:{Serialize(value)}");
 		}
 
+		internal void WriteSyncVar(byte index, object value)
+		{
+			WriteData($"{index}:{Serialize(value)}");
+		}
+
 		internal void FinializeSyncVar()
 		{
 			stringBuilder.Append($"||");
@@ -57,6 +62,17 @@ namespace CosmosEngine.Netcode.Serialization
 
 		private string Serialize(object value)
 		{
+			if (value.GetType() == typeof(float))
+				value = Mathf.Round((float)value, 2);
+			else if (value.GetType() == typeof(double))
+				value = System.Math.Round((double)value, 2);
+			else if (value.GetType() == typeof(Vector2))
+			{
+				Vector2 v = (Vector2)value;
+				v.X = Mathf.Round(v.X, 2);
+				v.Y = Mathf.Round(v.Y, 2);
+				value = (object)v;
+			}
 			return JsonConvert.SerializeObject(value);
 		}
 

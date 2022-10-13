@@ -16,8 +16,8 @@ namespace CosmosEngine.Netcode
 			if(!HasAuthority)
 			{
 				float dist = Vector2.Distance(Transform.Position, onlinePosition);
-				Transform.Position = Vector2.MoveTowards(Transform.Position, onlinePosition, 10f * dist * Time.DeltaTime);
-				Transform.Rotation = Mathf.MoveTowardsAngle(Transform.Rotation, onlineRotation, 360f * Time.DeltaTime);
+				Transform.Position = Vector2.Lerp(Transform.Position, onlinePosition, 10f * dist * Time.DeltaTime);
+				Transform.Rotation = Mathf.LerpAngle(Transform.Rotation, onlineRotation, 360f * Time.DeltaTime);
 			}
 			else
 			{

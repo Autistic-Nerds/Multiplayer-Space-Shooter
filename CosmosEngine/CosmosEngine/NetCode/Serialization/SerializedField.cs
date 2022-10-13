@@ -2,21 +2,21 @@ namespace CosmosEngine.Netcode.Serialization
 {
 	public struct SerializedField
 	{
-		private string name;
+		private byte index;
 		private string value;
 
-		public string Name => name;
+		public byte Index => index;
 		public string Value => value;
 
-		public SerializedField(string name, string value)
+		public SerializedField(byte index, string value)
 		{
-			this.name = name.Trim('"');
+			this.index = index;
 			this.value = value;
 		}
 
 		public override string ToString()
 		{
-			return $"{name}:{value}";
+			return $"{index}:{value}";
 		}
 	}
 }

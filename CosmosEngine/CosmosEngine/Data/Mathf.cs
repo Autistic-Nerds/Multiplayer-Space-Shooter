@@ -4,6 +4,10 @@ using System.Globalization;
 
 namespace CosmosEngine
 {
+	/// <summary>
+	/// Provides constants and static methods for trigonometric, logarithmic, common mathematical functions, linear interpolation, clamping and other useful functionality to use within the <see cref="CosmosEngine"/>.
+	/// <para>It's an extension that is build on top of the <see cref="System.Math"/> library.</para>
+	/// </summary>
 	public static class Mathf
 	{
 		#region Fields

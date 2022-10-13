@@ -51,7 +51,7 @@ namespace CosmosEngine.Netcode.Serialization
 
 		public object? ReadSyncVar(string name, System.Type type)
 		{
-			int index = syncVarData.FindIndex(item => item.Name.Equals(name));
+			int index = syncVarData.FindIndex(item => item.Index.Equals(name));
 			if (index >= 0)
 			{
 				return JsonConvert.DeserializeObject(syncVarData[index].Value, type);
@@ -80,10 +80,10 @@ namespace CosmosEngine.Netcode.Serialization
 						string[] field = syncVar.Split(':');
 						if (field.Length < 2)
 							continue;
-						string name = field[0];
-						string value = syncVar.Remove(0, name.Length + 1);
+						byte index = byte.Parse(field[0]);
+						string value = syncVar.Remove(0, index.ToString().Trim('"').Length + 1);
 
-						SerializedField variable = new SerializedField(name, value);
+						SerializedField variable = new SerializedField(index, value);
 						syncVarData.Add(variable);
 						i += variable.ToString().Length;
 					}

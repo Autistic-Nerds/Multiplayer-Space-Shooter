@@ -16,7 +16,7 @@ namespace CosmosEngine.Netcode
 		private NetcodeIdentity netIdentity;
 		private uint behaviourIndex;
 		private object[] syncVarDirtyBits;
-		private Dictionary<string, FieldInfo> syncVarFields;
+		private Dictionary<byte, FieldInfo> syncVarFields;
 
 		public NetcodeIdentity NetIdentity => netIdentity ??= GetComponent<NetcodeIdentity>();
 
@@ -60,15 +60,15 @@ namespace CosmosEngine.Netcode
 
 		private void InitialSyncFields()
 		{
-			syncVarFields = new Dictionary<string, FieldInfo>();
+			syncVarFields = new Dictionary<byte, FieldInfo>();
 			FieldInfo[] fields = this.GetType().GetFields(Flags);
 			syncVarDirtyBits = new object[fields.Length];
-			int index = 0;
+			byte index = 0;
 			foreach (FieldInfo field in fields)
 			{
 				if (field.IsSyncVar())
 				{
-					this.syncVarFields.Add(field.Name, field);
+					this.syncVarFields.Add(index, field);
 					syncVarDirtyBits[index] = field.GetValue(this);
 					index++;
 				}
@@ -145,7 +145,7 @@ namespace CosmosEngine.Netcode
 		{
 			foreach (SerializedField data in dataStream.ReadToEnd())
 			{
-				FieldInfo field = syncVarFields[data.Name];
+				FieldInfo field = syncVarFields[data.Index];
 				object value = JsonConvert.DeserializeObject((string)data.Value, field.FieldType);
 				//Debug.Log($"FIELD: {data.Name} = {value.GetType()} | {field.FieldType} DATA: {value}");
 
@@ -201,7 +201,7 @@ namespace CosmosEngine.Netcode
 
 		private void SerializeSyncVars(ref NetcodeWriter stream)
 		{
-			int index = 0;
+			byte index = 0;
 			bool dirtyData = false;
 			foreach (FieldInfo field in syncVarFields.Values)
 			{
@@ -209,7 +209,7 @@ namespace CosmosEngine.Netcode
 				SyncVarAttribute syncVarAttribute = field.GetCustomAttribute<SyncVarAttribute>();
 				if (!value.Equals(syncVarDirtyBits[index]) || syncVarAttribute.ForceSync)
 				{
-					stream.WriteSyncVar(field.Name, value);
+					stream.WriteSyncVar(index, value);
 					syncVarDirtyBits[index] = value;
 					dirtyData = true;
 				}
@@ -243,7 +243,7 @@ namespace CosmosEngine.Netcode
 			{
 				//Debug.Log($"DESERIALIZE DATA: {data.Name} - VALUE: {data.Value}");
 				//continue;
-				FieldInfo field = syncVarFields[data.Name];
+				FieldInfo field = syncVarFields[data.Index];
 				object value = JsonConvert.DeserializeObject(data.Value, field.FieldType);
 
 				if (value != null)
