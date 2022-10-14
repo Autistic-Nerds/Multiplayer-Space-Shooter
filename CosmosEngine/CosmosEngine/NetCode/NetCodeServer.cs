@@ -17,7 +17,7 @@ namespace CosmosEngine.Netcode
 	{
 		private string ip = "127.0.0.1";
 		private int port = 7000;
-		private float serverTickRate = 30;
+		private float serverTickRate = 20;
 		protected readonly List<NetcodeClient> connectedClients = new List<NetcodeClient>();
 		protected readonly Bag<NetcodeIdentity> netcodeObjects = new Bag<NetcodeIdentity>();
 
@@ -111,7 +111,6 @@ namespace CosmosEngine.Netcode
 		protected virtual void OnConnected()
 		{
 			transport.AddListener(ReceiveNetcodeMessage);
-			//transport.SimulateLatency(1500, 0.0f);
 			NetcodeHandler.IsConnected = true;
 		}
 

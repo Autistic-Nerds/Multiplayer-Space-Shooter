@@ -8,7 +8,6 @@ namespace SpaceBattle
 		protected override void Update()
 		{
 			Move();
-			Debug.Log($"Network mover - isMine: {HasAuthority}");
 		}
 
 		private void Move()
