@@ -3,8 +3,25 @@ using System.IO;
 using System.Net.Http.Json;
 using System.Text;
 
+Console.WriteLine($"write the port you wish to post/listen to.");
+short port;
+while(true)
+{
+	string? portChoice = Console.ReadLine();
+	if(short.TryParse(portChoice, out port))
+	{
+		break;
+	}
+	else
+	{
+		Console.WriteLine($"Invalid port, please try again");
+	}
+}
+
 HttpClient client = new HttpClient();
-string url = "https://localhost:5001/api/score";
+string url = $"https://localhost:{port}/api/score";
+
+HelpCenter();
 
 while (true)
 {
@@ -13,6 +30,11 @@ while (true)
 		break;
 	if (readline.Equals("exit", StringComparison.CurrentCultureIgnoreCase))
 		break;
+	if(readline.Equals("help", StringComparison.CurrentCultureIgnoreCase))
+	{
+		HelpCenter();
+		break;
+	}
 
 	string path = url;
 	if (readline.Contains("get", StringComparison.CurrentCultureIgnoreCase))
@@ -23,18 +45,18 @@ while (true)
 			path += $"/{split[1]}";
 		}
 		HttpResponseMessage respone = await client.GetAsync(path);
-		//Console.WriteLine(respone);
+		Console.WriteLine(respone);
 		string responeBody = await respone.Content.ReadAsStringAsync();
 		Console.WriteLine(responeBody);
 
-		var responesJson = await respone.Content.ReadFromJsonAsync<Score[]>();
-		if (responesJson != null)
-		{
-			foreach (Score s in responesJson)
-			{
-				Console.WriteLine($"{s.Name}: {s.ScoreNumber}");
-			}
-		}
+		//var responesJson = await respone.Content.ReadFromJsonAsync<Score[]>();
+		//if (responesJson != null)
+		//{
+		//	foreach (Score s in responesJson)
+		//	{
+		//		Console.WriteLine($"{s.Name}: {s.ScoreNumber}");
+		//	}
+		//}
 	}
 	else if(readline.Contains("post", StringComparison.CurrentCultureIgnoreCase))
 	{
@@ -86,4 +108,21 @@ while (true)
 			Console.WriteLine(e);
 		}
 	}
+	else
+	{
+		Console.WriteLine($"Invalid input, please try again.");
+	}
+}
+
+void HelpCenter()
+{
+	Console.WriteLine($"To use this application, type your desired input.");
+	Console.WriteLine($"get - show a collection of all the values.");
+	Console.WriteLine($"get [name] - show the [score] with the given [name].");
+	Console.WriteLine($"post [name] [score] - post a [score] with the given [name].");
+	Console.WriteLine($"put [name] [score] - modifies the [score] of the given [name].");
+	Console.WriteLine($"delete [name] - deletes the [score] at [name].");
+	Console.WriteLine($"help - show these helpful tooltips.");
+	Console.WriteLine($"exit - closes the application.");
+	Console.WriteLine();
 }
