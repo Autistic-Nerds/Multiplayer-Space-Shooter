@@ -57,6 +57,7 @@ namespace CosmosEngine.CoreModule
 			IsFixedTimeStep = false;
 			graphics.SynchronizeWithVerticalRetrace = true;
 			TargetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 120);
+			InactiveSleepTime = new TimeSpan(0);
 			graphics.PreferMultiSampling = true;
 
 			graphics.ApplyChanges();
