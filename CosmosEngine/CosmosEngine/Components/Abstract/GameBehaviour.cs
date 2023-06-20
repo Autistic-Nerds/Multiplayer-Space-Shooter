@@ -1,4 +1,5 @@
 ﻿
+using CosmosEngine.Async;
 using CosmosEngine.Modules;
 using System.Collections;
 using System.Collections.Generic;
@@ -56,16 +57,22 @@ namespace CosmosEngine
 					}
 					else
 					{
+						Debug.LogError($"TargetParameterCountException: Parameter count for {method.ParameterName()} was mismatched by {parameters.ParametersTypeToString()}.");
+						return null;
 						throw new System.Reflection.TargetParameterCountException($"Parameter count for {method.ParameterName()} was mismatched by {parameters.ParametersTypeToString()}.");
 					}
 				}
 				else
 				{
-					throw new System.ArgumentException($"Trying to start coroutine {methodName} but method is not of type {typeof(IEnumerator)}.");
+					Debug.LogError($"ArgumentException: Trying to start coroutine {methodName}, return type is {method.ReturnType} but needs to be of type {typeof(IEnumerator)} to start as coroutine.");
+					return null;
+					throw new System.ArgumentException($"Trying to start coroutine {methodName}, return type is {method.ReturnType} but needs to be of type {typeof(IEnumerator)} to start as coroutine.");
 				}
 			}
 			else
 			{
+				Debug.LogError($"NullReferenceException: Trying to start coroutine {methodName} but no such method exist on {GetType().FullName}.");
+				return null;
 				throw new System.NullReferenceException($"Trying to start coroutine {methodName} but no such method exist on {GetType().FullName}.");
 			}
 		}

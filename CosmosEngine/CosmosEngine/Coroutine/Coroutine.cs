@@ -70,6 +70,10 @@ namespace CosmosEngine
 						State = CoroutineState.Waiting;
 						return;
 					}
+					else
+					{
+						yieldInstruction.Complete();
+					}
 				}
 			}
 			//CoreModule.EngineCore.Debug.Add("Running");

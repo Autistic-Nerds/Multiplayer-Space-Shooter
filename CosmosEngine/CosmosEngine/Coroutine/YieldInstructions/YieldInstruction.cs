@@ -10,5 +10,6 @@ namespace CosmosEngine.Async
 	public abstract class YieldInstruction
 	{
 		public abstract bool KeepWaiting { get; }
+		public virtual void Complete() { }
 	}
 }

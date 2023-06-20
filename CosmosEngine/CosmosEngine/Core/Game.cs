@@ -46,6 +46,7 @@ namespace CosmosEngine.CoreModule
 			gameModules.Clear();
 			game = new T();
 
+			game.AddDefault();
 			game.AddEssential();
 			gameModules.Add(game);
 #if EDITOR

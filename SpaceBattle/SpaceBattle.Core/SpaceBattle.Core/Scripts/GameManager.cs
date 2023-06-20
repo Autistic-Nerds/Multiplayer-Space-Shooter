@@ -1,7 +1,9 @@
 ﻿using CosmosEngine;
 using CosmosEngine.Netcode;
+using CosmosEngine.Variables;
 using Newtonsoft.Json;
 using System;
+using System.Windows.Forms;
 
 namespace SpaceBattle
 {
@@ -22,9 +24,18 @@ namespace SpaceBattle
 			//string s = JsonConvert.SerializeObject(gameObject, typeof(GameObject), null);
 			//Debug.Log(s);
 
+			GameObject obj = new GameObject();
+			SpriteRenderer sr = obj.AddComponent<SpriteRenderer>();
+			sr.Sprite = Assets.Abattoir_Blue;
+
 			GameObject serverObject = new GameObject();
 			NetcodeServer server = serverObject.AddComponent<NetworkServerManager>();
 			GameObject go = new GameObject("Chat", typeof(NetcodeIdentity), typeof(NetworkChat));
+		}
+
+		private void Build()
+		{
+
 		}
 
 		public override void Update()

@@ -29,6 +29,7 @@ namespace CosmosEngine.CoreModule
 		internal static Viewport Viewport => Instance.GraphicsDevice.Viewport;
 		internal static Vector2Int ViewportSize => new Vector2Int(Viewport.Width, Viewport.Height);
 		internal static bool IsFullScreen => instance.graphics.IsFullScreen;
+		internal static GraphicsDeviceManager GraphicsDeviceManager => instance.graphics;
 		internal static GameTime GameTime { get; private set; }
 		internal static GameTime VariableGameTime { get; private set; }
 		public static SpriteBatch SpriteBatch => Instance.spriteBatch;
@@ -93,7 +94,6 @@ namespace CosmosEngine.CoreModule
 
 		protected override void Update(GameTime gameTime)
 		{
-
 #if EDITOR
 			updateThreadSW.Restart();
 			if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Escape))

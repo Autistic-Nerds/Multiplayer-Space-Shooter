@@ -1,6 +1,7 @@
 ﻿using CosmosEngine;
 using CosmosEngine.InputModule;
 using CosmosEngine.Netcode;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace SpaceBattle
@@ -9,6 +10,7 @@ namespace SpaceBattle
 	{
 		private float cd;
 		private List<Transform> projectiles = new List<Transform>();
+		private bool canMove;
 
 		protected override void Update()
 		{
@@ -35,6 +37,11 @@ namespace SpaceBattle
 		{
 			Rpc(nameof(SpawnProjectile), null);
 			SpawnProjectile();
+		}
+
+		private IEnumerator MoveShip()
+		{
+			yield return Wait.While(() => canMove);
 		}
 
 		[ServerRPC]

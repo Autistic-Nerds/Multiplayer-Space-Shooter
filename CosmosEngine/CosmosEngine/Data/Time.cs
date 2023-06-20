@@ -35,7 +35,7 @@ namespace CosmosEngine
 		/// </summary>
 		public static float UnscaledDeltaTime => Core.GameTime != null && (float)Core.GameTime.ElapsedGameTime.TotalSeconds > 0 ? (float)Core.GameTime.ElapsedGameTime.TotalSeconds : 1f;
 		/// <summary>
-		/// The time at the beginning of this frame.
+		/// The time in seconds since the start of the application at the beginning of this frame.
 		/// </summary>
 		public static float ElapsedTime => Core.GameTime != null ? (float)Core.GameTime.TotalGameTime.TotalSeconds : 1f;
 	}
